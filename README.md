@@ -77,3 +77,40 @@ Surefire esta configurado para incluir tambien las clases `*IT`, de modo que `mv
 `application.properties` toma la conexion de las variables `DB_URL`, `DB_USER` y `DB_PASSWORD`
 (por defecto `jdbc:postgresql://localhost:5432/pulsepass`, `postgres` / `postgres`). Las pruebas no
 necesitan ninguna base instalada.
+
+## API REST (Fase 3 - Controladores)
+
+Base: `/api`. Todos los errores usan `ErrorResponse` (`timestamp`, `status`, `error`, `message`, `details`).
+
+| Metodo | Endpoint | Service | Exito |
+|--------|----------|---------|-------|
+| GET | `/api/venues/{code}` | `VenueService.findByCode` | 200 |
+| GET | `/api/venues/active` | `VenueService.findActiveVenues` | 200 |
+| POST | `/api/events` | `EventService.create` | 201 |
+| GET | `/api/events/{eventCode}` | `EventService.findByCode` | 200 |
+| GET | `/api/events/published` | `EventService.findPublishedEvents` | 200 |
+| PATCH | `/api/events/{eventCode}/publish` | `EventService.publish` | 200 |
+| POST | `/api/events/{eventCode}/artists/{artistId}` | `EventService.addArtist` | 200 |
+| GET | `/api/events/by-artist?stageName=` | `EventService.findByArtist` | 200 |
+| GET | `/api/artists/{id}` | `ArtistService.findById` | 200 |
+| GET | `/api/artists/by-stage-name?stageName=` | `ArtistService.findByStageName` | 200 |
+| GET | `/api/artists/active` | `ArtistService.findActiveArtists` | 200 |
+| POST | `/api/users` | `UserService.register` | 201 |
+| GET | `/api/users/by-email?email=` | `UserService.findByEmail` | 200 |
+| GET | `/api/users/by-username?username=` | `UserService.findByUsername` | 200 |
+| POST | `/api/tickets` | `TicketService.purchase` | 201 |
+| GET | `/api/tickets/{ticketCode}` | `TicketService.findByCode` | 200 |
+| GET | `/api/tickets/by-user?email=` | `TicketService.findByUserEmail` | 200 |
+| GET | `/api/events/{eventCode}/tickets/paid` | `TicketService.findPaidTicketsByEvent` | 200 |
+| PATCH | `/api/tickets/{ticketCode}/cancel` | `TicketService.cancel` | 200 |
+| PATCH | `/api/tickets/{ticketCode}/use` | `TicketService.markAsUsed` | 200 |
+
+Errores: `400` validacion o JSON mal formado, `404` recurso inexistente, `409` duplicado o regla de negocio, `500` error inesperado.
+
+### Pruebas de Controller
+
+Los tests `*ControllerTest` usan `@WebMvcTest`, `MockMvc` y `@MockitoBean` (sin PostgreSQL ni contexto completo):
+
+```bash
+./mvnw test -Dtest='*ControllerTest'
+```
