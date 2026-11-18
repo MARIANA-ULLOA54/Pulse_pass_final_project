@@ -263,7 +263,8 @@ class TicketServiceImplTest {
         Ticket ticket = ServiceTestData.ticket(TicketStatus.PAID, andrea(), publishedEvent());
         when(ticketRepository.findByTicketCode("TKT-0001")).thenReturn(Optional.of(ticket));
         when(ticketRepository.save(ticket)).thenReturn(ticket);
-        when(ticketMapper.toResponse(ticket)).thenReturn(ServiceTestData.toResponse(ticket));
+        when(ticketMapper.toResponse(ticket)).thenAnswer(invocation ->
+                ServiceTestData.toResponse(invocation.getArgument(0, Ticket.class)));
 
         TicketResponse result = service.cancel("TKT-0001");
 
@@ -312,7 +313,8 @@ class TicketServiceImplTest {
         Ticket ticket = ServiceTestData.ticket(TicketStatus.PAID, andrea(), publishedEvent());
         when(ticketRepository.findByTicketCode("TKT-0001")).thenReturn(Optional.of(ticket));
         when(ticketRepository.save(ticket)).thenReturn(ticket);
-        when(ticketMapper.toResponse(ticket)).thenReturn(ServiceTestData.toResponse(ticket));
+        when(ticketMapper.toResponse(ticket)).thenAnswer(invocation ->
+                ServiceTestData.toResponse(invocation.getArgument(0, Ticket.class)));
 
         TicketResponse result = service.markAsUsed("TKT-0001");
 
