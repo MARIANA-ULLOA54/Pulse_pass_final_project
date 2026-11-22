@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** QT-001 y QT-002: Flyway aplica V1, V2 y V3 y Hibernate valida el esquema. */
+/** QT-001 y QT-002: Flyway aplica V1 a V4 y Hibernate valida el esquema. */
 @PostgresDataJpaTest
 class FlywayMigrationIT {
 
@@ -18,13 +18,13 @@ class FlywayMigrationIT {
     private JdbcTemplate jdbc;
 
     @Test
-    @DisplayName("QT-001: Flyway aplica V1, V2 y V3 en orden desde una base vacia")
+    @DisplayName("QT-001: Flyway aplica V1 a V4 en orden desde una base vacia")
     void appliesAllMigrationsInOrder() {
         List<String> versions = jdbc.queryForList(
                 "SELECT version FROM flyway_schema_history WHERE success = TRUE AND version IS NOT NULL ORDER BY installed_rank",
                 String.class);
 
-        assertThat(versions).containsExactly("1", "2", "3");
+        assertThat(versions).containsExactly("1", "2", "3", "4");
     }
 
     @Test
