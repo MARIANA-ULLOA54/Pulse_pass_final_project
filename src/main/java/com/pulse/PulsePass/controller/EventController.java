@@ -17,15 +17,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
+import com.pulse.PulsePass.domain.enums.EventStatus;
 
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
 
     private final EventService eventService;
+    private final com.pulse.PulsePass.service.AuthorizationService authorizationService;
 
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, com.pulse.PulsePass.service.AuthorizationService authorizationService) {
         this.eventService = eventService;
+        this.authorizationService = authorizationService;
     }
 
     @PostMapping
@@ -33,6 +37,7 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).body(eventService.create(request));
     }
 
+    @PreAuthorize("@authorizationService.mayReadEvent(#eventCode)")
     @GetMapping("/{eventCode}")
     public ResponseEntity<EventResponse> findByCode(@PathVariable String eventCode) {
         return ResponseEntity.ok(eventService.findByCode(eventCode));
@@ -56,6 +61,7 @@ public class EventController {
 
     @GetMapping("/by-artist")
     public ResponseEntity<List<EventSummaryResponse>> findByArtist(@RequestParam String stageName) {
-        return ResponseEntity.ok(eventService.findByArtist(stageName));
+        return ResponseEntity.ok(eventService.findByArtist(stageName).stream().filter(e -> e.status() == EventStatus.PUBLISHED || canSeeUnpublished()).toList());
     }
+    private boolean canSeeUnpublished() { return authorizationService.canReadOtherEvents(); }
 }
