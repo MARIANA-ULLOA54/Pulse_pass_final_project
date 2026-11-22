@@ -59,6 +59,9 @@ y Hibernate lo valida. **Requiere Docker en ejecucion.**
 ```bash
 ./mvnw clean test
 ```
+```powershell
+.\mvnw.cmd spring-boot:run
+```
 
 | Clase | Cubre |
 |-------|-------|
@@ -114,3 +117,30 @@ Los tests `*ControllerTest` usan `@WebMvcTest`, `MockMvc` y `@MockitoBean` (sin 
 ```bash
 ./mvnw test -Dtest='*ControllerTest'
 ```
+
+# PulsePass — Capa de seguridad (feature/security)
+
+## Preparación
+
+- Java 21, PostgreSQL y Maven (o `bash mvnw`).
+- Establecer `PULSEPASS_JWT_SECRET_BASE64` con una clave aleatoria nueva de al menos 32 bytes: `openssl rand -base64 32`.
+- Configurar `DB_URL`, `DB_USER`, `DB_PASSWORD` según su entorno.
+- Ejecutar `bash mvnw clean test` y `bash mvnw spring-boot:run`.
+- Flyway ejecuta `V4__security_credentials_roles.sql` sin modificar V1–V3.
+
+## Flujo
+
+1. `POST /api/users` con username, email, firstName, lastName, birthDate, password (mínimo 12 caracteres), y opcionalmente phone y city.
+2. `POST /api/auth/login` con `identifier` (username o email) y `password`.
+3. Enviar `Authorization: Bearer <accessToken>` para las rutas protegidas.
+4. `GET /api/auth/me` devuelve el ID, usuario, correo y roles actuales.
+
+Las cuentas preexistentes no tienen contraseña asignada y no pueden iniciar sesión hasta que un administrador habilite credenciales mediante un proceso seguro. Los roles STAFF y ADMIN no se conceden en registro público; se asignan mediante una operación administrativa controlada en `user_roles`.
+
+## Limitaciones del MVP
+
+STAFF opera tickets globalmente, sin asignación a eventos; no hay refresh token, revocación inmediata ni rate limiting. Requiere HTTPS y un gestor de secretos en producción.
+
+## Verificación de este entorno
+
+No se pudo ejecutar Maven: el wrapper intentó descargar Maven 3.10.1 desde Maven Central y la descarga falló. Se requiere compilar y ejecutar las pruebas en una máquina con Maven/dependencias disponibles; **no se afirma compilación verificada**.
