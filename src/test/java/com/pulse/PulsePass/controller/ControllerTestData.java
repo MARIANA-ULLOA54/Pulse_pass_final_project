@@ -41,7 +41,8 @@ final class ControllerTestData {
               "lastName": "Lopez",
               "phone": "3001234567",
               "city": "Santa Marta",
-              "birthDate": "2001-05-10"
+              "birthDate": "2001-05-10",
+              "password": "password-for-test"
             }
             """;
 
