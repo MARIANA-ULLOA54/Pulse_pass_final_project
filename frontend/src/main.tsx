@@ -5,6 +5,7 @@ import { RouterProvider, createBrowserRouter } from "react-router";
 import Layout from "./componentes/Layout";
 import { RutaProtegida, RutaPorRol, SoloAnonimo } from "./componentes/Guardas";
 import { AuthProvider } from "./context/AuthContext";
+import { ApiError } from "./lib/http";
 import Inicio from "./pages/Inicio";
 import "./index.css";
 const pages = import.meta.glob<{ default: React.ComponentType }>(
@@ -18,7 +19,11 @@ const lazy = (name: string) => async () => {
 const router = createBrowserRouter([
   {
     path: "/",
-    Component: Layout,
+    element: (
+      <AuthProvider>
+        <Layout />
+      </AuthProvider>
+    ),
     children: [
       { index: true, Component: Inicio },
       { path: "eventos", lazy: lazy("CatalogoEventos") },
@@ -78,14 +83,18 @@ const router = createBrowserRouter([
   },
 ]);
 const client = new QueryClient({
-  defaultOptions: { queries: { retry: 1, staleTime: 30000 } },
+  defaultOptions: {
+    queries: {
+      retry: (count, error) => count < 1 &&
+        (!(error instanceof ApiError) || error.status === 0 || error.status >= 500),
+      staleTime: 30_000,
+    },
+  },
 });
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
+      <RouterProvider router={router} />
     </QueryClientProvider>
   </React.StrictMode>,
 );

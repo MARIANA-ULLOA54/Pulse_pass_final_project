@@ -34,8 +34,8 @@ function abrir(path: string, responses: Record<string, unknown> = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={client}>
-      <AuthProvider>
-        <MemoryRouter initialEntries={[path]}>
+      <MemoryRouter initialEntries={[path]}>
+        <AuthProvider>
           <URLActual />
           <Routes>
             <Route path="/eventos" element={<CatalogoEventos />} />
@@ -46,8 +46,8 @@ function abrir(path: string, responses: Record<string, unknown> = {}) {
             <Route path="/sedes/:code" element={<DetalleSede />} />
             <Route path="/login" element={<h1>Iniciar sesión</h1>} />
           </Routes>
-        </MemoryRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </MemoryRouter>
     </QueryClientProvider>,
   );
   return fetchMock;

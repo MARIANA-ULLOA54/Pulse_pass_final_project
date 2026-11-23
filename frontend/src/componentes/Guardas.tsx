@@ -2,21 +2,23 @@ import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuth, hasRole } from "../context/AuthContext";
 import { Cargando } from "./UI";
 import { RUTAS } from "../lib/rutas";
+function IrAlLogin() {
+  const { pathname, search, hash } = useLocation();
+  return <Navigate to={RUTAS.login} state={{ desde: pathname + search + hash }} replace />;
+}
+
 export function RutaProtegida() {
   const { session } = useAuth();
-  const location = useLocation();
   if (session.status === "loading") return <Cargando />;
   if (session.status === "anonymous")
-    return (
-      <Navigate to={RUTAS.login} state={{ desde: location.pathname }} replace />
-    );
+    return <IrAlLogin />;
   return <Outlet />;
 }
 export function RutaPorRol({ roles }: { roles: string[] }) {
   const { session } = useAuth();
   if (session.status === "loading") return <Cargando />;
   if (session.status === "anonymous")
-    return <Navigate to={RUTAS.login} replace />;
+    return <IrAlLogin />;
   return hasRole(session.user, roles) ? (
     <Outlet />
   ) : (

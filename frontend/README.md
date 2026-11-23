@@ -16,6 +16,7 @@ Abrir http://localhost:5173. Vite reenvía `/api` a `localhost:8080`.
 
 ## Verificaciones
 ```bash
+npm run lint
 npm run typecheck
 npm run build
 npm test
@@ -33,3 +34,12 @@ Token JWT temporal en `sessionStorage`, cierre de sesión al expirar, guardas po
 No existe GET de todos los eventos para ADMIN: la vista permite buscar por código y recuerda códigos creados en esta pestaña. La compra no calcula precio ni procesa pagos.
 
 Las pruebas de catálogo simulan las respuestas de la API. Para probar con datos reales, inicia Spring Boot y PostgreSQL según los requisitos de arriba.
+
+## Autenticación
+
+- `/registro` crea una cuenta con rol de comprador y lleva a `/login`.
+- `/login` acepta usuario o correo. Después de iniciar sesión, el frontend consulta `/api/auth/me` y vuelve a la página que solicitó autenticación.
+- `/cuenta` muestra el perfil propio y permite cerrar sesión. Las guardas y la navegación se ajustan a los roles `USER`, `STAFF` y `ADMIN` que devuelve la API.
+- Cuando vence la sesión o una solicitud autenticada recibe un 401, la app limpia el token y la caché y solicita iniciar sesión de nuevo.
+
+El conjunto `src/test/auth.test.tsx` verifica estos flujos con Vitest, Testing Library y MSW.

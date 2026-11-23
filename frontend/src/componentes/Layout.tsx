@@ -15,7 +15,7 @@ export default function Layout() {
     ["Sedes", RUTAS.sedes],
   ];
   if (session.status === "authenticated") {
-    links.push(["Mi cuenta", RUTAS.cuenta]);
+    links.push([`Mi cuenta (${session.user.username})`, RUTAS.cuenta]);
     if (hasRole(session.user, ["USER"]))
       links.push(["Mis tickets", RUTAS.tickets]);
     if (hasRole(session.user, ["STAFF", "ADMIN"]))
@@ -46,7 +46,7 @@ export default function Layout() {
             </span>
             PulsePass
           </Link>
-          <div className="hidden md:flex items-center gap-5">
+          <div className="hidden lg:flex items-center gap-5">
             {links.map(([label, path]) => (
               <NavLink
                 key={path}
@@ -61,7 +61,7 @@ export default function Layout() {
               </NavLink>
             ))}
           </div>
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-2">
             <button aria-label="Cambiar tema" onClick={theme} className="p-2">
               {dark ? <Sun /> : <Moon />}
             </button>
@@ -84,7 +84,7 @@ export default function Layout() {
             )}
           </div>
           <button
-            className="md:hidden p-2"
+            className="lg:hidden p-2"
             aria-label={menu ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={menu}
             onClick={() => setMenu(!menu)}
@@ -93,7 +93,7 @@ export default function Layout() {
           </button>
         </nav>
         {menu && (
-          <div className="md:hidden p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
+          <div className="lg:hidden p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
             {links.map(([label, path]) => (
               <Link
                 onClick={() => setMenu(false)}

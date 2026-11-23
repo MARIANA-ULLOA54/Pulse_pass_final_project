@@ -78,7 +78,7 @@ export const identity = z.object({
 export const authResponse = z.object({
   accessToken: z.string(),
   tokenType: z.string(),
-  expiresIn: z.number(),
+  expiresIn: z.number().int().positive(),
 });
 export type EventSummary = z.infer<typeof eventSummary>;
 export type EventDetail = z.infer<typeof eventDetail>;
@@ -89,16 +89,22 @@ export type Identity = z.infer<typeof identity>;
 export type Category = z.infer<typeof category>;
 export type TicketType = z.infer<typeof ticketType>;
 export const registerSchema = z.object({
-  username: z.string().min(3),
-  email: z.email(),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  birthDate: z.string().min(1),
-  password: z.string().min(12),
+  username: z.string().trim().min(1, "Ingresa tu usuario").max(60),
+  email: z.string().trim().pipe(z.email("Ingresa un correo válido").max(150)),
+  firstName: z.string().trim().min(1, "Ingresa tus nombres").max(80),
+  lastName: z.string().trim().min(1, "Ingresa tus apellidos").max(80),
+  birthDate: z.iso.date("Ingresa una fecha válida").refine((value) => {
+    const today = new Date();
+    const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60_000);
+    return value <= localDate.toISOString().slice(0, 10);
+  }, "La fecha de nacimiento no puede ser futura"),
+  password: z.string().min(12, "Usa al menos 12 caracteres")
+    .refine((value) => value.trim().length > 0, "Ingresa tu contraseña")
+    .refine((value) => new TextEncoder().encode(value).length <= 72, "La contraseña supera los 72 bytes"),
 });
 export const loginSchema = z.object({
-  identifier: z.string().min(1),
-  password: z.string().min(1),
+  identifier: z.string().trim().min(1, "Ingresa tu usuario o correo"),
+  password: z.string().min(1, "Ingresa tu contraseña"),
 });
 export const createEventSchema = z.object({
   eventCode: z.string().min(1).max(30),

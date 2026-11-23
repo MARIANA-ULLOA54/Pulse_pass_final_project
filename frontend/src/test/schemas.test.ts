@@ -16,4 +16,18 @@ describe("Validación", () => {
   it("admite los cuatro tipos de entrada", () => {
     expect(ticketType.options).toHaveLength(4);
   });
+
+  it("valida la fecha de nacimiento y el límite de la contraseña en bytes", () => {
+    const registro = {
+      username: "andrea",
+      email: "andrea@example.com",
+      firstName: "Andrea",
+      lastName: "Ruiz",
+      birthDate: "1998-04-12",
+      password: "é".repeat(36),
+    };
+    expect(registerSchema.safeParse(registro).success).toBe(true);
+    expect(registerSchema.safeParse({ ...registro, password: "é".repeat(37) }).success).toBe(false);
+    expect(registerSchema.safeParse({ ...registro, birthDate: "9999-01-01" }).success).toBe(false);
+  });
 });

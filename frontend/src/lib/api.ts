@@ -29,7 +29,8 @@ export const api = {
   venue: (code: string) => http(`/api/venues/${enc(code)}`, venue),
   login: (data: z.infer<typeof loginSchema>) =>
     http("/api/auth/login", authResponse, json(data)),
-  me: () => http("/api/auth/me", identity),
+  me: (signal?: AbortSignal, expireOnUnauthorized = true) =>
+    http("/api/auth/me", identity, { signal, expireOnUnauthorized }),
   register: (data: z.infer<typeof registerSchema>) =>
     http("/api/users", user, json(data)),
   userByEmail: (email: string) =>

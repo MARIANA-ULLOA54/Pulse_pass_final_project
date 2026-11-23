@@ -21,20 +21,25 @@ export function setHttpAuth(
 ) {
   tokenGetter = get;
   unauthorized = onUnauthorized;
+  return () => {
+    tokenGetter = () => null;
+    unauthorized = () => {};
+  };
 }
 export async function http<T>(
   path: string,
   schema: z.ZodType<T>,
-  options: RequestInit = {},
+  options: RequestInit & { expireOnUnauthorized?: boolean } = {},
 ): Promise<T> {
-  const headers = new Headers(options.headers);
+  const { expireOnUnauthorized = true, ...request } = options;
+  const headers = new Headers(request.headers);
   headers.set("Accept", "application/json");
   if (options.body) headers.set("Content-Type", "application/json");
   const token = tokenGetter();
   if (token) headers.set("Authorization", `Bearer ${token}`);
   let response: Response;
   try {
-    response = await fetch(path, { ...options, headers });
+    response = await fetch(path, { ...request, headers });
   } catch {
     throw new ApiError(
       0,
@@ -44,7 +49,10 @@ export async function http<T>(
   if (!response.ok) {
     const raw: unknown = await response.json().catch(() => null);
     const parsed = errorSchema.safeParse(raw);
-    if (response.status === 401 && token) unauthorized();
+    if (response.status === 401 && token && token === tokenGetter() &&
+      expireOnUnauthorized && !request.signal?.aborted) {
+      unauthorized();
+    }
     const messages: Record<number, string> = {
       400: "Revisa los datos enviados.",
       401: "Credenciales inválidas o sesión expirada.",
