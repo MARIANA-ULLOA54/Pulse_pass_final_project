@@ -8,7 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Inicio from "./pages/Inicio";
 import "./index.css";
 const pages = import.meta.glob<{ default: React.ComponentType }>(
-  "./pages/*.tsx",
+  ["./pages/*.tsx", "!./pages/Inicio.tsx", "!./pages/shared.tsx"],
 );
 const lazy = (name: string) => async () => {
   const load = pages[`./pages/${name}.tsx`];

@@ -1,9 +1,25 @@
 import { Link } from "react-router";
 import { api } from "../lib/api";
 import { RUTAS } from "../lib/rutas";
-import { EventCard, Heading, EstadoVacio } from "../componentes/UI";
+import { AvatarArtista, EventCard, EstadoVacio } from "../componentes/UI";
 import { Remote } from "./shared";
 import { useAuth } from "../context/AuthContext";
+
+function Esqueletos({ cantidad, className, itemClassName }: {
+  cantidad: number;
+  className: string;
+  itemClassName: string;
+}) {
+  return (
+    <div role="status" className={className}>
+      <span className="sr-only">Cargando información…</span>
+      {Array.from({ length: cantidad }, (_, index) => (
+        <div key={index} aria-hidden="true" className={itemClassName + " bg-slate-200 dark:bg-slate-800 motion-safe:animate-pulse"} />
+      ))}
+    </div>
+  );
+}
+
 export default function Inicio() {
   const { session } = useAuth();
   return (
@@ -33,10 +49,14 @@ export default function Inicio() {
         </div>
       </section>
       <div className="flex justify-between items-center">
-        <Heading title="Próximos eventos" />
+        <h2 className="text-2xl font-bold mb-5">Próximos eventos</h2>
         <Link to={RUTAS.eventos}>Ver todos →</Link>
       </div>
-      <Remote keyName={["events"]} fetcher={api.events}>
+      <Remote
+        keyName={["events"]}
+        fetcher={api.events}
+        loading={<Esqueletos cantidad={3} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" itemClassName="h-64 rounded-xl" />}
+      >
         {(events) =>
           events.length ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -50,19 +70,24 @@ export default function Inicio() {
         }
       </Remote>
       <div className="flex justify-between items-center mt-10">
-        <Heading title="Artistas destacados" />
+        <h2 className="text-2xl font-bold mb-5">Artistas destacados</h2>
         <Link to={RUTAS.artistas}>Ver todos →</Link>
       </div>
-      <Remote keyName={["artists"]} fetcher={api.artists}>
+      <Remote
+        keyName={["artists"]}
+        fetcher={api.artists}
+        loading={<Esqueletos cantidad={6} className="flex flex-wrap gap-3" itemClassName="h-14 w-36 rounded-full" />}
+      >
         {(artists) =>
           artists.length ? (
             <div className="flex flex-wrap gap-3">
               {artists.slice(0, 6).map((a) => (
                 <Link
-                  className="rounded-full bg-indigo-100 text-indigo-800 px-4 py-2"
+                  className="flex items-center gap-2 rounded-full border border-slate-300 p-1 pr-4"
                   key={a.id}
                   to={RUTAS.artista(a.id)}
                 >
+                  <AvatarArtista nombre={a.stageName} />
                   {a.stageName}
                 </Link>
               ))}

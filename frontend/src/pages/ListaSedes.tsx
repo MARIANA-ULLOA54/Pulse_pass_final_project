@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { api } from "../lib/api";
 import { RUTAS } from "../lib/rutas";
-import { Heading, Panel, EstadoVacio } from "../componentes/UI";
+import { Badge, Heading, Panel, EstadoVacio } from "../componentes/UI";
 import { Remote } from "./shared";
 export default function ListaSedes() {
   return (
@@ -20,6 +20,7 @@ export default function ListaSedes() {
                     <h2 className="font-bold text-xl">{v.name}</h2>
                     <p>{v.city}</p>
                     <p className="text-slate-500">Capacidad: {v.capacity}</p>
+                    <Badge status={v.active ? "Activa" : "Inactiva"} />
                   </Panel>
                 </Link>
               ))}

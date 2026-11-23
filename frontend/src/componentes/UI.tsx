@@ -137,16 +137,28 @@ const palette: Record<Category, { color: string; icon: typeof Music }> = {
     icon: Clapperboard,
   },
 };
+export function AvatarArtista({ nombre }: { nombre: string }) {
+  return (
+    <span aria-hidden="true" className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-800 font-bold">
+      {nombre.slice(0, 2).toLocaleUpperCase("es-CO")}
+    </span>
+  );
+}
+export function EventBanner({ category }: { category: Category }) {
+  const { color, icon: Icon } = palette[category];
+  return (
+    <div aria-hidden="true" className={clsx("h-32 flex items-center justify-center", color)}>
+      <Icon size={48} strokeWidth={1.5} />
+    </div>
+  );
+}
 export function EventCard({ event }: { event: EventSummary | EventDetail }) {
-  const { color, icon: Icon } = palette[event.category];
   return (
     <Link
       to={RUTAS.evento(event.eventCode)}
       className="block rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition"
     >
-      <div className={clsx("h-32 flex items-center justify-center", color)}>
-        <Icon size={48} strokeWidth={1.5} />
-      </div>
+      <EventBanner category={event.category} />
       <div className="p-4 space-y-2">
         <p className="text-xs font-bold tracking-wider text-marca-600">
           {event.category}
@@ -174,6 +186,7 @@ export function Badge({ status }: { status: string }) {
     SOLD_OUT: "bg-amber-100 text-amber-800",
     RESERVED: "bg-sky-100 text-sky-800",
     DRAFT: "bg-slate-200 text-slate-800",
+    Activa: "bg-emerald-100 text-emerald-800",
   };
   return (
     <span
