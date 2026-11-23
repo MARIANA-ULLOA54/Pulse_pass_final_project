@@ -3,10 +3,13 @@ package com.pulse.PulsePass.controller;
 import com.pulse.PulsePass.dto.request.RegisterUserRequest;
 import com.pulse.PulsePass.exception.DuplicateResourceException;
 import com.pulse.PulsePass.exception.ResourceNotFoundException;
+import com.pulse.PulsePass.service.AuthService;
 import com.pulse.PulsePass.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.pulse.PulsePass.security.JwtAuthenticationFilter;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -26,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@MockitoBean(types = JwtAuthenticationFilter.class)
 class UserControllerTest {
 
     @Autowired
@@ -34,10 +39,13 @@ class UserControllerTest {
     @MockitoBean
     private UserService userService;
 
+    @MockitoBean
+    private AuthService authService;
+
     // TEST-CTRL-USR-001 / AC-CTRL007
     @Test
     void register_validRequest_returns201() throws Exception {
-        when(userService.register(any(RegisterUserRequest.class))).thenReturn(ControllerTestData.user());
+        when(authService.register(any(RegisterUserRequest.class))).thenReturn(ControllerTestData.user());
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -49,7 +57,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.active").value(true));
 
         ArgumentCaptor<RegisterUserRequest> captor = ArgumentCaptor.forClass(RegisterUserRequest.class);
-        verify(userService).register(captor.capture());
+        verify(authService).register(captor.capture());
         assertThat(captor.getValue().birthDate()).isEqualTo(LocalDate.of(2001, 5, 10));
     }
 
@@ -66,7 +74,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.details.email").value("Email must be valid"));
 
-        verify(userService, never()).register(any());
+        verify(authService, never()).register(any());
     }
 
     @Test
@@ -81,13 +89,13 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.details.lastName").exists())
                 .andExpect(jsonPath("$.details.birthDate").exists());
 
-        verify(userService, never()).register(any());
+        verify(authService, never()).register(any());
     }
 
     // TEST-CTRL-USR-003 / AC-CTRL008
     @Test
     void register_duplicatedUsername_returns409() throws Exception {
-        when(userService.register(any(RegisterUserRequest.class)))
+        when(authService.register(any(RegisterUserRequest.class)))
                 .thenThrow(new DuplicateResourceException("Username already exists."));
 
         mockMvc.perform(post("/api/users")
