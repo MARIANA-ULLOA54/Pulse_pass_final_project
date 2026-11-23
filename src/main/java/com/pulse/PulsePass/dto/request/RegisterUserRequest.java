@@ -32,5 +32,12 @@ public record RegisterUserRequest(
         String city,
 
         @NotNull(message = "Birth date is required")
-        LocalDate birthDate
-) {}
+        LocalDate birthDate,
+
+        @NotBlank @Size(min = 12) String password
+) {
+    /** Constructor para pruebas heredadas; el registro HTTP siempre exige password. */
+    public RegisterUserRequest(String username,String email,String firstName,String lastName,String phone,String city,LocalDate birthDate) {
+        this(username,email,firstName,lastName,phone,city,birthDate,null);
+    }
+}
