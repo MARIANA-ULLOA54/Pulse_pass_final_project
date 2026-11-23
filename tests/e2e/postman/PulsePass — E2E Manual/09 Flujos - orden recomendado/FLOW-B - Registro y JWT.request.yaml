@@ -1,0 +1,8 @@
+$kind: http-request
+name: FLOW-B | Registro y JWT
+description: Guía de secuencia (request de conectividad reutilizable). Registrar A y B → login A,B,STAFF,ADMIN → copiar tokens → /me
+url: "{{baseUrl}}/api/venues/active"
+method: GET
+auth:
+  type: noauth
+order: 2000

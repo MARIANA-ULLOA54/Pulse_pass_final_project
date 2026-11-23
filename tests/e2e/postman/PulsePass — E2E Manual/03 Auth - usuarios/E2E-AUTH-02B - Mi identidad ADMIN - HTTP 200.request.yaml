@@ -1,0 +1,17 @@
+$kind: http-request
+name: E2E-AUTH-02B | Mi identidad ADMIN | HTTP 200
+description: |
+  ID: E2E-AUTH-02B
+  Actor: ADMIN
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 200.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/auth/me"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{adminToken}}"
+order: 9000

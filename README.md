@@ -110,6 +110,16 @@ Base: `/api`. Todos los errores usan `ErrorResponse` (`timestamp`, `status`, `er
 
 Errores: `400` validacion o JSON mal formado, `404` recurso inexistente, `409` duplicado o regla de negocio, `500` error inesperado.
 
+### Swagger UI
+
+Con la aplicacion en ejecucion, abre [Swagger UI](http://localhost:8080/swagger-ui.html)
+para explorar y probar los endpoints. La especificacion OpenAPI esta disponible
+en [JSON](http://localhost:8080/v3/api-docs) y [YAML](http://localhost:8080/v3/api-docs.yaml).
+
+Para probar un endpoint protegido, ejecuta `POST /api/auth/login` desde Swagger UI,
+copia el campo `accessToken` y pegalo en **Authorize** sin el prefijo `Bearer`.
+Usa una cuenta con el rol requerido por la operacion.
+
 ### Pruebas de Controller
 
 Los tests `*ControllerTest` usan `@WebMvcTest`, `MockMvc` y `@MockitoBean` (sin PostgreSQL ni contexto completo):

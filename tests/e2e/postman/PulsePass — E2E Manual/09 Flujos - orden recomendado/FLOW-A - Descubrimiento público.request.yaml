@@ -1,0 +1,8 @@
+$kind: http-request
+name: FLOW-A | Descubrimiento público
+description: Guía de secuencia (request de conectividad reutilizable). Venues → artistas → publicados → evento por artista
+url: "{{baseUrl}}/api/venues/active"
+method: GET
+auth:
+  type: noauth
+order: 1000

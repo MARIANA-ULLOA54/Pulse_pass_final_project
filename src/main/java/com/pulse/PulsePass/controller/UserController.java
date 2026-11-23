@@ -1,10 +1,12 @@
 package com.pulse.PulsePass.controller;
 
+import com.pulse.PulsePass.config.OpenApiConfig;
 import com.pulse.PulsePass.dto.request.RegisterUserRequest;
 import com.pulse.PulsePass.dto.response.UserResponse;
 import com.pulse.PulsePass.service.UserService;
 import com.pulse.PulsePass.service.AuthService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +35,14 @@ public class UserController {
     }
 
     @PreAuthorize("@authorizationService.ownEmail(#email) or @authorizationService.admin()")
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
     @GetMapping("/by-email")
     public ResponseEntity<UserResponse> findByEmail(@RequestParam String email) {
         return ResponseEntity.ok(userService.findByEmail(email));
     }
 
     @PreAuthorize("@authorizationService.ownUsername(#username) or @authorizationService.admin()")
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
     @GetMapping("/by-username")
     public ResponseEntity<UserResponse> findByUsername(@RequestParam String username) {
         return ResponseEntity.ok(userService.findByUsername(username));

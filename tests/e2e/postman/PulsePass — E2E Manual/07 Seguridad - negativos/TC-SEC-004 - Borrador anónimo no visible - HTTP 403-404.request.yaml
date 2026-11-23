@@ -1,0 +1,15 @@
+$kind: http-request
+name: TC-SEC-004 | Borrador anónimo no visible | HTTP 403/404
+description: |
+  ID: TC-SEC-004
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 403/404.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/events/{{draftEventCode}}"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: noauth
+order: 9000

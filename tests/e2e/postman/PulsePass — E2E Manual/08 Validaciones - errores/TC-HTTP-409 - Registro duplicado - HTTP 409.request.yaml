@@ -1,0 +1,29 @@
+$kind: http-request
+name: TC-HTTP-409 | Registro duplicado | HTTP 409
+description: |
+  ID: TC-HTTP-409
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 409.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/users"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "{{userAUsername}}",
+      "email": "{{userAEmail}}",
+      "firstName": "Andrea",
+      "lastName": "Pruebas",
+      "phone": "3000000000",
+      "city": "Santa Marta",
+      "birthDate": "1998-05-15",
+      "password": "{{userAPassword}}"
+    }
+auth:
+  type: noauth
+order: 2000

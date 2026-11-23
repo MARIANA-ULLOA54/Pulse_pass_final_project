@@ -1,0 +1,15 @@
+$kind: http-request
+name: E2E-VEN-02 | Venues activos | HTTP 200
+description: |
+  ID: E2E-VEN-02
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 200.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/venues/active"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: noauth
+order: 1000

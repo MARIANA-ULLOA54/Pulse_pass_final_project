@@ -1,0 +1,15 @@
+$kind: http-request
+name: E2E-EVT-03 | Listar publicados | HTTP 200
+description: |
+  ID: E2E-EVT-03
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 200.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/events/published"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: noauth
+order: 3000

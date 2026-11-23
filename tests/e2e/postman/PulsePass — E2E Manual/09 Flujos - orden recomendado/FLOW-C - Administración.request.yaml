@@ -1,0 +1,8 @@
+$kind: http-request
+name: FLOW-C | Administración
+description: Guía de secuencia (request de conectividad reutilizable). ADMIN crea draft → asocia artista → publica → GET público
+url: "{{baseUrl}}/api/venues/active"
+method: GET
+auth:
+  type: noauth
+order: 3000

@@ -1,0 +1,62 @@
+# Bitácora manual — completar después de cada Send
+
+No se declara ninguna ejecución aprobada anticipadamente. HTTP observado y evidencias deben completarse en Postman.
+
+| Caso | Fecha/hora | Actor | Petición | HTTP esperado | HTTP observado | JSON/estado | Resultado | Evidencia/observación |
+|---|---|---|---|---|---|---|---|---|
+| E2E-VEN-02 | — | ANONYMOUS | `GET /api/venues/active` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-VEN-01 | — | ANONYMOUS | `GET /api/venues/{{venueActiveCode}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-ART-03 | — | ANONYMOUS | `GET /api/artists/active` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-ART-01 | — | ANONYMOUS | `GET /api/artists/{{artistId}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-ART-02 | — | ANONYMOUS | `GET /api/artists/by-stage-name?stageName={{artistStageName}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-USR-01 | — | ANONYMOUS | `POST /api/users` | 201 | — | Pendiente | NOT RUN | — |
+| TC-AUTH-001B | — | ANONYMOUS | `POST /api/users` | 201 | — | Pendiente | NOT RUN | — |
+| E2E-AUTH-01A | — | ANONYMOUS | `POST /api/auth/login` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-AUTH-01B | — | ANONYMOUS | `POST /api/auth/login` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-AUTH-01C | — | ANONYMOUS | `POST /api/auth/login` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-AUTH-01D | — | ANONYMOUS | `POST /api/auth/login` | 200 | — | Pendiente | NOT RUN | — |
+| TC-AUTH-003 | — | ANONYMOUS | `POST /api/auth/login` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-AUTH-02A | — | USER_A | `GET /api/auth/me` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-AUTH-02B | — | ADMIN | `GET /api/auth/me` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-USR-02 | — | USER_A | `GET /api/users/by-email?email={{userAEmail}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-USR-03 | — | USER_A | `GET /api/users/by-username?username={{userAUsername}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-EVT-01 | — | ADMIN | `POST /api/events` | 201 | — | Pendiente | NOT RUN | — |
+| E2E-EVT-02 | — | ANONYMOUS | `GET /api/events/{{publishedEventCode}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-EVT-03 | — | ANONYMOUS | `GET /api/events/published` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-EVT-05 | — | ADMIN | `POST /api/events/{{eventToPublishCode}}/artists/{{artistId}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-EVT-04 | — | ADMIN | `PATCH /api/events/{{eventToPublishCode}}/publish` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-EVT-06 | — | ANONYMOUS | `GET /api/events/by-artist?stageName={{artistStageName}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-TKT-01A | — | USER_A | `POST /api/tickets` | 201 | — | Pendiente | NOT RUN | — |
+| E2E-TKT-01B | — | USER_A | `POST /api/tickets` | 201 | — | Pendiente | NOT RUN | — |
+| E2E-TKT-02 | — | USER_A | `GET /api/tickets/{{ticketCancelableCode}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-TKT-03 | — | USER_A | `GET /api/tickets/by-user?email={{userAEmail}}` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-TKT-04 | — | STAFF | `GET /api/events/{{publishedEventCode}}/tickets/paid` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-TKT-05 | — | USER_A | `PATCH /api/tickets/{{ticketCancelableCode}}/cancel` | 200 | — | Pendiente | NOT RUN | — |
+| E2E-TKT-06 | — | STAFF | `PATCH /api/tickets/{{ticketUsableCode}}/use` | 200 | — | Pendiente | NOT RUN | — |
+| TC-AUTH-007 | — | ANONYMOUS | `GET /api/auth/me` | 401 | — | Pendiente | NOT RUN | — |
+| TC-AUTH-008 | — | ANONYMOUS | `GET /api/auth/me` | 401 | — | Pendiente | NOT RUN | — |
+| TC-AUTH-004 | — | ANONYMOUS | `POST /api/auth/login` | 401 | — | Pendiente | NOT RUN | — |
+| TC-AUTH-005 | — | ANONYMOUS | `POST /api/auth/login` | 401 | — | Pendiente | NOT RUN | — |
+| TC-SEC-001A | — | ANONYMOUS | `POST /api/events` | 401 | — | Pendiente | NOT RUN | — |
+| TC-SEC-001B | — | USER_A | `POST /api/events` | 403 | — | Pendiente | NOT RUN | — |
+| TC-SEC-002 | — | USER_A | `PATCH /api/events/{{eventToPublishCode}}/publish` | 403 | — | Pendiente | NOT RUN | — |
+| TC-SEC-003 | — | USER_A | `POST /api/events/{{eventToPublishCode}}/artists/{{artistId}}` | 403 | — | Pendiente | NOT RUN | — |
+| TC-SEC-004 | — | ANONYMOUS | `GET /api/events/{{draftEventCode}}` | 403/404 | — | Pendiente | NOT RUN | — |
+| TC-SEC-006 | — | USER_B | `GET /api/users/by-email?email={{userAEmail}}` | 403/404 | — | Pendiente | NOT RUN | — |
+| TC-SEC-007 | — | USER_B | `GET /api/users/by-username?username={{userAUsername}}` | 403/404 | — | Pendiente | NOT RUN | — |
+| TC-SEC-008 | — | USER_A | `POST /api/tickets` | 403 | — | Pendiente | NOT RUN | — |
+| TC-SEC-009 | — | USER_B | `GET /api/tickets/{{ticketCancelableCode}}` | 403/404 | — | Pendiente | NOT RUN | — |
+| TC-SEC-010 | — | USER_B | `GET /api/tickets/by-user?email={{userAEmail}}` | 403/404 | — | Pendiente | NOT RUN | — |
+| TC-SEC-011 | — | USER_B | `PATCH /api/tickets/{{ticketCancelableCode}}/cancel` | 403/404 | — | Pendiente | NOT RUN | — |
+| TC-SEC-012 | — | USER_A | `PATCH /api/tickets/{{ticketUsableCode}}/use` | 403 | — | Pendiente | NOT RUN | — |
+| TC-SEC-013 | — | USER_A | `GET /api/events/{{publishedEventCode}}/tickets/paid` | 403 | — | Pendiente | NOT RUN | — |
+| TC-SEC-015 | — | ADMIN | `GET /api/events/{{draftEventCode}}` | 200 | — | Pendiente | NOT RUN | — |
+| TC-SEC-016 | — | ANONYMOUS | `POST /api/users` | 201 | — | Pendiente | NOT RUN | — |
+| TC-HTTP-400 | — | ANONYMOUS | `POST /api/users` | 400 | — | Pendiente | NOT RUN | — |
+| TC-HTTP-409 | — | ANONYMOUS | `POST /api/users` | 409 | — | Pendiente | NOT RUN | — |
+| TC-HTTP-404 | — | ANONYMOUS | `GET /api/venues/NO_EXISTE_{{runId}}` | 404 | — | Pendiente | NOT RUN | — |
+| TC-BIZ-011 | — | USER_A | `PATCH /api/tickets/{{ticketCancelableCode}}/cancel` | 409 | — | Pendiente | NOT RUN | — |
+| TC-BIZ-013 | — | STAFF | `PATCH /api/tickets/{{ticketUsableCode}}/use` | 409 | — | Pendiente | NOT RUN | — |
+| TC-HTTP-ENUM | — | USER_A | `POST /api/tickets` | 400 | — | Pendiente | NOT RUN | — |
+| TC-HTTP-JSON | — | ANONYMOUS | `POST /api/auth/login` | 400 | — | Pendiente | NOT RUN | — |
+| PRE-001 | — | ANONYMOUS | `GET /api/venues/active` | 200 | — | Pendiente | NOT RUN | — |

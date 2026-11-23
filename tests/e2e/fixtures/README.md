@@ -1,0 +1,3 @@
+# Fixtures E2E
+
+Usar exclusivamente `pulsepass_e2e`, no la base de desarrollo. Crear base con `CREATE DATABASE pulsepass_e2e;`, arrancar backend con `DB_URL=jdbc:postgresql://localhost:5432/pulsepass_e2e` para aplicar Flyway y luego ejecutar `seed-e2e.sql` con **psql**, no pgAdmin Query Tool (contiene metacomandos `\prompt`). El script pregunta las contraseñas de STAFF/ADMIN y genera BCrypt con pgcrypto; no versiona credenciales. Registrar usuarios A/B vía HTTP. No repetir cancelación/uso sobre el mismo ticket en una nueva corrida: usar runId y códigos nuevos. No ejecutar TRUNCATE o DROP sobre bases compartidas.

@@ -1,9 +1,12 @@
 package com.pulse.PulsePass.controller;
 
+import com.pulse.PulsePass.config.OpenApiConfig;
 import com.pulse.PulsePass.dto.request.CreateEventRequest;
 import com.pulse.PulsePass.dto.response.EventResponse;
 import com.pulse.PulsePass.dto.response.EventSummaryResponse;
 import com.pulse.PulsePass.service.EventService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +37,14 @@ public class EventController {
         this.authorizationService = authorizationService;
     }
 
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
     @PostMapping
     public ResponseEntity<EventResponse> create(@Valid @RequestBody CreateEventRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(eventService.create(request));
     }
 
     @PreAuthorize("@authorizationService.mayReadEvent(#eventCode)")
+    @Operation(description = "Los eventos publicados son publicos. Los demas requieren un JWT de STAFF o ADMIN.")
     @GetMapping("/{eventCode}")
     public ResponseEntity<EventResponse> findByCode(@PathVariable String eventCode) {
         return ResponseEntity.ok(eventService.findByCode(eventCode));
@@ -50,11 +55,13 @@ public class EventController {
         return ResponseEntity.ok(eventService.findPublishedEvents());
     }
 
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
     @PatchMapping("/{eventCode}/publish")
     public ResponseEntity<EventResponse> publish(@PathVariable String eventCode) {
         return ResponseEntity.ok(eventService.publish(eventCode));
     }
 
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
     @PostMapping("/{eventCode}/artists/{artistId}")
     public ResponseEntity<EventResponse> addArtist(
             @PathVariable String eventCode, @PathVariable Long artistId) {

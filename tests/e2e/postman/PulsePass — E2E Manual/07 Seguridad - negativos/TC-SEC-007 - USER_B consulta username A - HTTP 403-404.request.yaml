@@ -1,0 +1,17 @@
+$kind: http-request
+name: TC-SEC-007 | USER_B consulta username A | HTTP 403/404
+description: |
+  ID: TC-SEC-007
+  Actor: USER_B
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 403/404.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/users/by-username?username={{userAUsername}}"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{userBToken}}"
+order: 11000

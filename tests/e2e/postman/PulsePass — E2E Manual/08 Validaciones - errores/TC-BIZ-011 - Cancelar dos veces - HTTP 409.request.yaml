@@ -1,0 +1,17 @@
+$kind: http-request
+name: TC-BIZ-011 | Cancelar dos veces | HTTP 409
+description: |
+  ID: TC-BIZ-011
+  Actor: USER_A
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 409.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/tickets/{{ticketCancelableCode}}/cancel"
+method: PATCH
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{userAToken}}"
+order: 4000

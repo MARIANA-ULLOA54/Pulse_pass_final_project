@@ -1,0 +1,23 @@
+$kind: http-request
+name: TC-HTTP-JSON | JSON malformado | HTTP 400
+description: |-
+  ID: TC-HTTP-JSON
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 400.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+  Para JSON malformado real, eliminar manualmente la llave final del cuerpo antes de Send; restaurar después
+url: "{{baseUrl}}/api/auth/login"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "identifier": "{{userAUsername}}"
+    }
+auth:
+  type: noauth
+order: 7000

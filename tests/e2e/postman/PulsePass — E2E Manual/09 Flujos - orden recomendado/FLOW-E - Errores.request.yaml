@@ -1,0 +1,8 @@
+$kind: http-request
+name: FLOW-E | Errores
+description: Guía de secuencia (request de conectividad reutilizable). 401,403,404,409 y JSON de ErrorResponse
+url: "{{baseUrl}}/api/venues/active"
+method: GET
+auth:
+  type: noauth
+order: 5000

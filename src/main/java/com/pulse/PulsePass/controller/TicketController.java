@@ -1,8 +1,10 @@
 package com.pulse.PulsePass.controller;
 
+import com.pulse.PulsePass.config.OpenApiConfig;
 import com.pulse.PulsePass.dto.request.PurchaseTicketRequest;
 import com.pulse.PulsePass.dto.response.TicketResponse;
 import com.pulse.PulsePass.service.TicketService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
  * Expone TicketService. Mapea tambien /api/events/{eventCode}/tickets/paid porque la operacion
  * pertenece a TicketService (PRD 8.5), asi EventController solo depende de EventService.
  */
+@SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
 @RestController
 @RequestMapping("/api")
 public class TicketController {
