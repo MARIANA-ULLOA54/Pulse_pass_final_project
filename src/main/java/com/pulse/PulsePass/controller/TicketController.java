@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * Expone TicketService. Mapea tambien /api/events/{eventCode}/tickets/paid porque la operacion
@@ -31,16 +32,19 @@ public class TicketController {
         this.ticketService = ticketService;
     }
 
+    @PreAuthorize("@authorizationService.ownEmail(#request.userEmail())")
     @PostMapping("/tickets")
     public ResponseEntity<TicketResponse> purchase(@Valid @RequestBody PurchaseTicketRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.purchase(request));
     }
 
+    @PreAuthorize("@authorizationService.ticketReadable(#ticketCode)")
     @GetMapping("/tickets/{ticketCode}")
     public ResponseEntity<TicketResponse> findByCode(@PathVariable String ticketCode) {
         return ResponseEntity.ok(ticketService.findByCode(ticketCode));
     }
 
+    @PreAuthorize("@authorizationService.ownEmail(#email) or @authorizationService.admin()")
     @GetMapping("/tickets/by-user")
     public ResponseEntity<List<TicketResponse>> findByUserEmail(@RequestParam String email) {
         return ResponseEntity.ok(ticketService.findByUserEmail(email));
@@ -51,6 +55,7 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.findPaidTicketsByEvent(eventCode));
     }
 
+    @PreAuthorize("@authorizationService.ticketCancellable(#ticketCode)")
     @PatchMapping("/tickets/{ticketCode}/cancel")
     public ResponseEntity<TicketResponse> cancel(@PathVariable String ticketCode) {
         return ResponseEntity.ok(ticketService.cancel(ticketCode));
