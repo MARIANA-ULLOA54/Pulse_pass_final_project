@@ -2,10 +2,20 @@ import { useState } from "react";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Heading, TicketCard, EstadoVacio } from "../componentes/UI";
+import { ticketStatus, type TicketStatus } from "../lib/schemas";
 import { Remote } from "./shared";
+
+const estados: Record<TicketStatus, string> = {
+  RESERVED: "Reservados",
+  PAID: "Pagados",
+  CANCELLED: "Cancelados",
+  USED: "Usados",
+};
+const filtros = ["TODOS", ...ticketStatus.options] as const;
+
 export default function MisTickets() {
   const { session } = useAuth();
-  const [filter, setFilter] = useState("TODOS");
+  const [filter, setFilter] = useState<TicketStatus | "TODOS">("TODOS");
   if (session.status !== "authenticated") return null;
   return (
     <>
@@ -13,21 +23,15 @@ export default function MisTickets() {
         title="Mis tickets"
         subtitle="Consulta y administra tus entradas"
       />
-      <div className="flex flex-wrap gap-2 mb-6">
-        {["TODOS", "PAID", "USED", "CANCELLED"].map((s) => (
+      <div aria-label="Filtrar tickets por estado" className="flex flex-wrap gap-2 mb-6" role="group">
+        {filtros.map((s) => (
           <button
             key={s}
             aria-pressed={filter === s}
             onClick={() => setFilter(s)}
             className={`rounded-full px-4 py-2 ${filter === s ? "bg-marca-600 text-white" : "bg-slate-200 dark:bg-slate-800"}`}
           >
-            {s === "TODOS"
-              ? "Todos"
-              : s === "PAID"
-                ? "Pagados"
-                : s === "USED"
-                  ? "Usados"
-                  : "Cancelados"}
+            {s === "TODOS" ? "Todos" : estados[s]}
           </button>
         ))}
       </div>
@@ -46,7 +50,11 @@ export default function MisTickets() {
               ))}
             </div>
           ) : (
-            <EstadoVacio mensaje="No tienes tickets en esta categoría" />
+            <EstadoVacio
+              mensaje={filter === "TODOS"
+                ? "Aún no tienes tickets. Explora la cartelera para encontrar tu próximo evento."
+                : `No tienes tickets ${estados[filter].toLocaleLowerCase("es-CO")}.`}
+            />
           );
         }}
       </Remote>

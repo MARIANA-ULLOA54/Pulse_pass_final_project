@@ -83,6 +83,7 @@ export const authResponse = z.object({
 export type EventSummary = z.infer<typeof eventSummary>;
 export type EventDetail = z.infer<typeof eventDetail>;
 export type Ticket = z.infer<typeof ticket>;
+export type TicketStatus = z.infer<typeof ticketStatus>;
 export type Artist = z.infer<typeof artist>;
 export type Venue = z.infer<typeof venue>;
 export type Identity = z.infer<typeof identity>;
