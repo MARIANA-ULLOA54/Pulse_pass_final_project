@@ -11,8 +11,6 @@ import org.springframework.test.context.ActiveProfiles;
 @Import(PostgresContainerConfig.class)
 class PulsePassApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {}
 }

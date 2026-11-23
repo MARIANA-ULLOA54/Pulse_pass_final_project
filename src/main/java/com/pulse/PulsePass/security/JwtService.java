@@ -50,8 +50,12 @@ public class JwtService {
     }
 
     public Long verify(String token) {
-        var parsed = Jwts.parser().verifyWith(key).requireIssuer(issuer)
-                .build().parseSignedClaims(token);
+        var parsed =
+                Jwts.parser()
+                        .verifyWith(key)
+                        .requireIssuer(issuer)
+                        .build()
+                        .parseSignedClaims(token);
         if (!"HS256".equals(parsed.getHeader().getAlgorithm())) {
             throw new JwtException("Unexpected algorithm");
         }

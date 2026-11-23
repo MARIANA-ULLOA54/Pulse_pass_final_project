@@ -29,31 +29,44 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private UserProfileRepository userProfileRepository;
-    @Mock
-    private UserMapper userMapper;
+    @Mock private UserRepository userRepository;
+    @Mock private UserProfileRepository userProfileRepository;
+    @Mock private UserMapper userMapper;
 
     private UserServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new UserServiceImpl(userRepository, userProfileRepository, userMapper,
-                ServiceTestData.CLOCK);
+        service =
+                new UserServiceImpl(
+                        userRepository, userProfileRepository, userMapper, ServiceTestData.CLOCK);
     }
 
     private RegisterUserRequest request(LocalDate birthDate) {
-        return new RegisterUserRequest("andrea", "andrea@email.com", "Andrea", "Lopez",
-                "3001234567", "Santa Marta", birthDate);
+        return new RegisterUserRequest(
+                "andrea",
+                "andrea@email.com",
+                "Andrea",
+                "Lopez",
+                "3001234567",
+                "Santa Marta",
+                birthDate);
     }
 
     // TEST-USER-001 / BR-USER-003 / BR-USER-004
     @Test
     void register_validUser_savesActiveUserAndProfile() {
-        UserResponse expected = new UserResponse(1L, "andrea", "andrea@email.com", true,
-                "Andrea", "Lopez", "3001234567", "Santa Marta", LocalDate.of(2001, 5, 10));
+        UserResponse expected =
+                new UserResponse(
+                        1L,
+                        "andrea",
+                        "andrea@email.com",
+                        true,
+                        "Andrea",
+                        "Lopez",
+                        "3001234567",
+                        "Santa Marta",
+                        LocalDate.of(2001, 5, 10));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
         when(userMapper.toResponse(any(User.class))).thenReturn(expected);
 
@@ -115,8 +128,9 @@ class UserServiceImplTest {
     @Test
     void findByUsername_existingUser_returnsDto() {
         User user = new User("andrea", "andrea@email.com", true);
-        UserResponse expected = new UserResponse(1L, "andrea", "andrea@email.com", true,
-                null, null, null, null, null);
+        UserResponse expected =
+                new UserResponse(
+                        1L, "andrea", "andrea@email.com", true, null, null, null, null, null);
         when(userRepository.findByUsername("andrea")).thenReturn(Optional.of(user));
         when(userMapper.toResponse(user)).thenReturn(expected);
 

@@ -26,16 +26,11 @@ class EventSearchIT {
 
     private static final LocalDateTime NOW = LocalDateTime.of(2026, 11, 17, 0, 0);
 
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private VenueRepository venueRepository;
-    @Autowired
-    private ArtistRepository artistRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TicketRepository ticketRepository;
+    @Autowired private EventRepository eventRepository;
+    @Autowired private VenueRepository venueRepository;
+    @Autowired private ArtistRepository artistRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private TicketRepository ticketRepository;
 
     @BeforeEach
     void setUp() {
@@ -46,20 +41,45 @@ class EventSearchIT {
         Artist neon = artistRepository.findByStageName("Neon Waves").orElseThrow();
 
         // Dos artistas cuyo nombre contiene "o": sin DISTINCT este evento saldria duplicado
-        Event cmf = TestData.event("CMF-2026", santaMarta, EventStatus.PUBLISHED, LocalDateTime.of(2030, 8, 1, 20, 0));
+        Event cmf =
+                TestData.event(
+                        "CMF-2026",
+                        santaMarta,
+                        EventStatus.PUBLISHED,
+                        LocalDateTime.of(2030, 8, 1, 20, 0));
         cmf.addArtist(solar);
         cmf.addArtist(neon);
 
-        Event soon = TestData.event("EVT-SOON", santaMarta, EventStatus.PUBLISHED, LocalDateTime.of(2030, 2, 1, 20, 0));
+        Event soon =
+                TestData.event(
+                        "EVT-SOON",
+                        santaMarta,
+                        EventStatus.PUBLISHED,
+                        LocalDateTime.of(2030, 2, 1, 20, 0));
         soon.addArtist(solar);
 
-        Event draft = TestData.event("EVT-DRAFT", santaMarta, EventStatus.DRAFT, LocalDateTime.of(2030, 4, 1, 20, 0));
+        Event draft =
+                TestData.event(
+                        "EVT-DRAFT",
+                        santaMarta,
+                        EventStatus.DRAFT,
+                        LocalDateTime.of(2030, 4, 1, 20, 0));
         draft.addArtist(solar);
 
-        Event past = TestData.event("EVT-PAST", santaMarta, EventStatus.PUBLISHED, LocalDateTime.of(2020, 4, 1, 20, 0));
+        Event past =
+                TestData.event(
+                        "EVT-PAST",
+                        santaMarta,
+                        EventStatus.PUBLISHED,
+                        LocalDateTime.of(2020, 4, 1, 20, 0));
         past.addArtist(solar);
 
-        Event inBogota = TestData.event("EVT-BOG", bogota, EventStatus.PUBLISHED, LocalDateTime.of(2030, 3, 1, 20, 0));
+        Event inBogota =
+                TestData.event(
+                        "EVT-BOG",
+                        bogota,
+                        EventStatus.PUBLISHED,
+                        LocalDateTime.of(2030, 3, 1, 20, 0));
         inBogota.addArtist(solar);
 
         eventRepository.save(cmf);
@@ -69,9 +89,15 @@ class EventSearchIT {
         eventRepository.save(inBogota);
 
         User andrea = userRepository.save(TestData.user("andrea", "andrea@pulse.com"));
-        ticketRepository.save(TestData.ticket("TCK-CMF", andrea, cmf, TicketType.VIP, TicketStatus.PAID, "250000"));
-        ticketRepository.save(TestData.ticket("TCK-SOON", andrea, soon, TicketType.GENERAL, TicketStatus.PAID, "120000"));
-        ticketRepository.save(TestData.ticket("TCK-PAST", andrea, past, TicketType.GENERAL, TicketStatus.USED, "100000"));
+        ticketRepository.save(
+                TestData.ticket(
+                        "TCK-CMF", andrea, cmf, TicketType.VIP, TicketStatus.PAID, "250000"));
+        ticketRepository.save(
+                TestData.ticket(
+                        "TCK-SOON", andrea, soon, TicketType.GENERAL, TicketStatus.PAID, "120000"));
+        ticketRepository.save(
+                TestData.ticket(
+                        "TCK-PAST", andrea, past, TicketType.GENERAL, TicketStatus.USED, "100000"));
         ticketRepository.flush();
     }
 
@@ -88,14 +114,17 @@ class EventSearchIT {
     void cityAndArtistBothMustMatch() {
         assertThat(eventRepository.findByCityAndArtistStageName("Bogota", "Neon Waves")).isEmpty();
         assertThat(eventRepository.findByCityAndArtistStageName("Santa Marta", "Neon Waves"))
-                .extracting(Event::getEventCode).containsExactly("CMF-2026");
+                .extracting(Event::getEventCode)
+                .containsExactly("CMF-2026");
     }
 
     @Test
-    @DisplayName("FR-SRC-003: recomendados = publicados, posteriores a la fecha, de la ciudad, sin duplicados y ordenados")
+    @DisplayName(
+            "FR-SRC-003: recomendados = publicados, posteriores a la fecha, de la ciudad, sin duplicados y ordenados")
     void findsRecommendedEvents() {
-        List<Event> events = eventRepository.findRecommendedEvents(
-                EventStatus.PUBLISHED, NOW, "Santa Marta", "o");
+        List<Event> events =
+                eventRepository.findRecommendedEvents(
+                        EventStatus.PUBLISHED, NOW, "Santa Marta", "o");
 
         // CMF-2026 tiene dos artistas que contienen "o" y aun asi aparece una sola vez
         assertThat(events).extracting(Event::getEventCode).containsExactly("EVT-SOON", "CMF-2026");
@@ -104,8 +133,9 @@ class EventSearchIT {
     @Test
     @DisplayName("FR-SRC-003: el texto del artista se compara sin distinguir mayusculas")
     void recommendedIsCaseInsensitiveOnArtist() {
-        List<Event> events = eventRepository.findRecommendedEvents(
-                EventStatus.PUBLISHED, NOW, "Santa Marta", "SOLAR");
+        List<Event> events =
+                eventRepository.findRecommendedEvents(
+                        EventStatus.PUBLISHED, NOW, "Santa Marta", "SOLAR");
 
         assertThat(events).extracting(Event::getEventCode).containsExactly("EVT-SOON", "CMF-2026");
     }
@@ -113,10 +143,12 @@ class EventSearchIT {
     @Test
     @DisplayName("FR-SRC-003: excluye borradores, eventos pasados y otras ciudades")
     void recommendedExcludesDraftPastAndOtherCities() {
-        List<Event> events = eventRepository.findRecommendedEvents(
-                EventStatus.PUBLISHED, NOW, "Santa Marta", "solar");
+        List<Event> events =
+                eventRepository.findRecommendedEvents(
+                        EventStatus.PUBLISHED, NOW, "Santa Marta", "solar");
 
-        assertThat(events).extracting(Event::getEventCode)
+        assertThat(events)
+                .extracting(Event::getEventCode)
                 .doesNotContain("EVT-DRAFT", "EVT-PAST", "EVT-BOG");
     }
 
@@ -125,6 +157,8 @@ class EventSearchIT {
     void findsTicketsOfFutureEventsInChronologicalOrder() {
         List<Ticket> tickets = ticketRepository.findTicketsOfEventsAfter(NOW);
 
-        assertThat(tickets).extracting(Ticket::getTicketCode).containsExactly("TCK-SOON", "TCK-CMF");
+        assertThat(tickets)
+                .extracting(Ticket::getTicketCode)
+                .containsExactly("TCK-SOON", "TCK-CMF");
     }
 }

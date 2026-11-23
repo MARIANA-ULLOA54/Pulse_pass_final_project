@@ -11,7 +11,8 @@ public record SecurityPrincipal(
         String email,
         String password,
         boolean active,
-        Collection<? extends GrantedAuthority> authorities) implements UserDetails {
+        Collection<? extends GrantedAuthority> authorities)
+        implements UserDetails {
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

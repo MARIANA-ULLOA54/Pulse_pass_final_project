@@ -23,7 +23,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService users;
     private final ObjectMapper mapper;
 
-    public JwtAuthenticationFilter(JwtService jwt, CustomUserDetailsService users, ObjectMapper mapper) {
+    public JwtAuthenticationFilter(
+            JwtService jwt, CustomUserDetailsService users, ObjectMapper mapper) {
         this.jwt = jwt;
         this.users = users;
         this.mapper = mapper;
@@ -31,9 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain chain) throws ServletException, IOException {
+            HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
         var headers = request.getHeaders("Authorization");
         if (!headers.hasMoreElements()) {
             chain.doFilter(request, response);
@@ -55,10 +55,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (!principal.isEnabled()) {
                 throw new UsernameNotFoundException("Inactive account");
             }
-            var authentication = new UsernamePasswordAuthenticationToken(
-                    principal, null, principal.getAuthorities());
+            var authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            principal, null, principal.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException | AuthenticationException ex) {
+        } catch (io.jsonwebtoken.JwtException
+                | IllegalArgumentException
+                | AuthenticationException ex) {
             SecurityContextHolder.clearContext();
             writeError(response, HttpStatus.UNAUTHORIZED, "Invalid Bearer token");
             return;
@@ -66,11 +69,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private void writeError(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+    private void writeError(HttpServletResponse response, HttpStatus status, String message)
+            throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        mapper.writeValue(response.getWriter(), new ErrorResponse(
-            LocalDateTime.now(), status.value(), status.getReasonPhrase(), message, Map.of()));
+        mapper.writeValue(
+                response.getWriter(),
+                new ErrorResponse(
+                        LocalDateTime.now(),
+                        status.value(),
+                        status.getReasonPhrase(),
+                        message,
+                        Map.of()));
     }
 }

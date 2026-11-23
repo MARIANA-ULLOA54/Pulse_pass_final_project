@@ -25,11 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockitoBean(types = JwtAuthenticationFilter.class)
 class ArtistControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private ArtistService artistService;
+    @MockitoBean private ArtistService artistService;
 
     // TEST-CTRL-ART-001
     @Test
@@ -47,7 +45,8 @@ class ArtistControllerTest {
     // TEST-CTRL-ART-002
     @Test
     void findById_missingArtist_returns404() throws Exception {
-        when(artistService.findById(99L)).thenThrow(new ResourceNotFoundException("Artist not found: 99"));
+        when(artistService.findById(99L))
+                .thenThrow(new ResourceNotFoundException("Artist not found: 99"));
 
         mockMvc.perform(get("/api/artists/99"))
                 .andExpect(status().isNotFound())
@@ -69,7 +68,8 @@ class ArtistControllerTest {
 
     @Test
     void findByStageName_missingArtist_returns404() throws Exception {
-        when(artistService.findByStageName("Nadie")).thenThrow(new ResourceNotFoundException("Artist not found: Nadie"));
+        when(artistService.findByStageName("Nadie"))
+                .thenThrow(new ResourceNotFoundException("Artist not found: Nadie"));
 
         mockMvc.perform(get("/api/artists/by-stage-name").param("stageName", "Nadie"))
                 .andExpect(status().isNotFound());

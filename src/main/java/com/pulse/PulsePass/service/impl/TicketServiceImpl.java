@@ -37,12 +37,13 @@ public class TicketServiceImpl implements TicketService {
     private final TicketPriceCalculator priceCalculator;
     private final Clock clock;
 
-    public TicketServiceImpl(TicketRepository ticketRepository,
-                             UserRepository userRepository,
-                             EventRepository eventRepository,
-                             TicketMapper ticketMapper,
-                             TicketPriceCalculator priceCalculator,
-                             Clock clock) {
+    public TicketServiceImpl(
+            TicketRepository ticketRepository,
+            UserRepository userRepository,
+            EventRepository eventRepository,
+            TicketMapper ticketMapper,
+            TicketPriceCalculator priceCalculator,
+            Clock clock) {
         this.ticketRepository = ticketRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
@@ -55,34 +56,49 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public TicketResponse purchase(PurchaseTicketRequest request) {
-        if (request == null || request.userEmail() == null || request.eventCode() == null
+        if (request == null
+                || request.userEmail() == null
+                || request.eventCode() == null
                 || request.type() == null) {
             throw new BusinessRuleException("userEmail, eventCode and type are required.");
         }
 
         // BR-TICKET-001 / 002
-        User user = userRepository.findByEmailIgnoreCase(request.userEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userEmail()));
+        User user =
+                userRepository
+                        .findByEmailIgnoreCase(request.userEmail())
+                        .orElseThrow(
+                                () ->
+                                        new ResourceNotFoundException(
+                                                "User not found: " + request.userEmail()));
         if (!user.isActive()) {
             throw new BusinessRuleException("User is not active: " + request.userEmail());
         }
 
         // BR-TICKET-003 / 004 / 005
-        Event event = eventRepository.findByEventCode(request.eventCode())
-                .orElseThrow(() -> new ResourceNotFoundException("Event not found: " + request.eventCode()));
+        Event event =
+                eventRepository
+                        .findByEventCode(request.eventCode())
+                        .orElseThrow(
+                                () ->
+                                        new ResourceNotFoundException(
+                                                "Event not found: " + request.eventCode()));
         if (event.getStatus() != EventStatus.PUBLISHED) {
             throw new BusinessRuleException(
-                    "Tickets can only be purchased for PUBLISHED events. Current status: " + event.getStatus());
+                    "Tickets can only be purchased for PUBLISHED events. Current status: "
+                            + event.getStatus());
         }
         if (!event.getEventDate().isAfter(now())) {
-            throw new BusinessRuleException("Event has already taken place: " + event.getEventCode());
+            throw new BusinessRuleException(
+                    "Event has already taken place: " + event.getEventCode());
         }
 
         // BR-TICKET-006
         validateMinimumAge(user, event);
 
         // BR-TICKET-007
-        long paidTickets = ticketRepository.countByEventCodeAndStatus(event.getEventCode(), TicketStatus.PAID);
+        long paidTickets =
+                ticketRepository.countByEventCodeAndStatus(event.getEventCode(), TicketStatus.PAID);
         int capacity = event.getVenue().getCapacity();
         if (paidTickets >= capacity) {
             throw new BusinessRuleException("Event has no capacity left: " + event.getEventCode());
@@ -91,14 +107,15 @@ public class TicketServiceImpl implements TicketService {
         // BR-TICKET-009
         BigDecimal price = priceCalculator.calculate(request.type());
 
-        Ticket ticket = new Ticket(
-                generateTicketCode(),
-                request.type(),
-                price,
-                TicketStatus.PAID,
-                now(),
-                user,
-                event);
+        Ticket ticket =
+                new Ticket(
+                        generateTicketCode(),
+                        request.type(),
+                        price,
+                        TicketStatus.PAID,
+                        now(),
+                        user,
+                        event);
         Ticket saved = ticketRepository.save(ticket);
 
         // BR-TICKET-008: misma transaccion que la creacion del ticket
@@ -119,8 +136,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional(readOnly = true)
     public List<TicketResponse> findByUserEmail(String email) {
-        return ticketRepository.findByUser_EmailIgnoreCaseOrderByPurchaseDateDesc(email)
-                .stream()
+        return ticketRepository.findByUser_EmailIgnoreCaseOrderByPurchaseDateDesc(email).stream()
                 .map(ticketMapper::toResponse)
                 .toList();
     }
@@ -131,7 +147,8 @@ public class TicketServiceImpl implements TicketService {
         if (!eventRepository.existsByEventCode(eventCode)) {
             throw new ResourceNotFoundException("Event not found: " + eventCode);
         }
-        return ticketRepository.findByEvent_EventCodeAndStatus(eventCode, TicketStatus.PAID)
+        return ticketRepository
+                .findByEvent_EventCodeAndStatus(eventCode, TicketStatus.PAID)
                 .stream()
                 .map(ticketMapper::toResponse)
                 .toList();
@@ -149,7 +166,8 @@ public class TicketServiceImpl implements TicketService {
         }
         // BR-TICKET-012
         if (now().isAfter(ticket.getEvent().getEventDate())) {
-            throw new BusinessRuleException("Ticket cannot be cancelled after the event date: " + ticketCode);
+            throw new BusinessRuleException(
+                    "Ticket cannot be cancelled after the event date: " + ticketCode);
         }
 
         ticket.setStatus(TicketStatus.CANCELLED);
@@ -168,7 +186,8 @@ public class TicketServiceImpl implements TicketService {
         // BR-TICKET-013
         if (ticket.getStatus() != TicketStatus.PAID) {
             throw new BusinessRuleException(
-                    "Only PAID tickets can be marked as used. Current status: " + ticket.getStatus());
+                    "Only PAID tickets can be marked as used. Current status: "
+                            + ticket.getStatus());
         }
 
         ticket.setStatus(TicketStatus.USED);
@@ -176,8 +195,10 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private Ticket getTicket(String ticketCode) {
-        return ticketRepository.findByTicketCode(ticketCode)
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found: " + ticketCode));
+        return ticketRepository
+                .findByTicketCode(ticketCode)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Ticket not found: " + ticketCode));
     }
 
     /** La edad se evalua en la fecha del evento, no en la fecha de compra. */
@@ -198,7 +219,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private String generateTicketCode() {
-        return "TKT-" + UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
+        return "TKT-"
+                + UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
     }
 
     private LocalDateTime now() {

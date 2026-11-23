@@ -22,17 +22,24 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
     }
 
     public void handle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AccessDeniedException ex) throws IOException {
-        writeError(response, HttpStatus.FORBIDDEN, "No tiene permisos para realizar esta operacion");
+            HttpServletRequest request, HttpServletResponse response, AccessDeniedException ex)
+            throws IOException {
+        writeError(
+                response, HttpStatus.FORBIDDEN, "No tiene permisos para realizar esta operacion");
     }
 
-    private void writeError(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+    private void writeError(HttpServletResponse response, HttpStatus status, String message)
+            throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        mapper.writeValue(response.getWriter(), new ErrorResponse(
-            LocalDateTime.now(), status.value(), status.getReasonPhrase(), message, Map.of()));
+        mapper.writeValue(
+                response.getWriter(),
+                new ErrorResponse(
+                        LocalDateTime.now(),
+                        status.value(),
+                        status.getReasonPhrase(),
+                        message,
+                        Map.of()));
     }
 }

@@ -30,7 +30,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     // ---------- JPQL (consultas con JOIN) ----------
 
     /** FR-SRC-001 / FR-ART-004: eventos de un artista por stageName, sin duplicados. */
-    @Query("""
+    @Query(
+            """
             SELECT DISTINCT e
             FROM Event e
             JOIN e.artists a
@@ -40,7 +41,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByArtistStageName(@Param("stageName") String stageName);
 
     /** FR-SRC-002: eventos de una ciudad en los que participa un artista especifico. */
-    @Query("""
+    @Query(
+            """
             SELECT DISTINCT e
             FROM Event e
             JOIN e.venue v
@@ -49,14 +51,15 @@ public interface EventRepository extends JpaRepository<Event, Long> {
               AND a.stageName = :stageName
             ORDER BY e.eventDate ASC
             """)
-    List<Event> findByCityAndArtistStageName(@Param("city") String city,
-                                             @Param("stageName") String stageName);
+    List<Event> findByCityAndArtistStageName(
+            @Param("city") String city, @Param("stageName") String stageName);
 
     /**
      * FR-SRC-003 / UC-09: eventos recomendados. Publicados, posteriores a una fecha,
      * en una ciudad y con un artista cuyo nombre contenga el texto (case-insensitive).
      */
-    @Query("""
+    @Query(
+            """
             SELECT DISTINCT e
             FROM Event e
             JOIN e.venue v
@@ -67,8 +70,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
               AND LOWER(a.stageName) LIKE LOWER(CONCAT('%', :artistText, '%'))
             ORDER BY e.eventDate ASC
             """)
-    List<Event> findRecommendedEvents(@Param("status") EventStatus status,
-                                      @Param("after") LocalDateTime after,
-                                      @Param("city") String city,
-                                      @Param("artistText") String artistText);
+    List<Event> findRecommendedEvents(
+            @Param("status") EventStatus status,
+            @Param("after") LocalDateTime after,
+            @Param("city") String city,
+            @Param("artistText") String artistText);
 }

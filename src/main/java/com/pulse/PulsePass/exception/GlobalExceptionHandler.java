@@ -27,7 +27,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> details = new LinkedHashMap<>();
-        ex.getBindingResult().getFieldErrors()
+        ex.getBindingResult()
+                .getFieldErrors()
                 .forEach(error -> details.putIfAbsent(error.getField(), error.getDefaultMessage()));
         return build(HttpStatus.BAD_REQUEST, "Validation failed", details);
     }
@@ -38,15 +39,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponse> handleMissingParameter(MissingServletRequestParameterException ex) {
-        return build(HttpStatus.BAD_REQUEST, "Validation failed",
+    public ResponseEntity<ErrorResponse> handleMissingParameter(
+            MissingServletRequestParameterException ex) {
+        return build(
+                HttpStatus.BAD_REQUEST,
+                "Validation failed",
                 Map.of(ex.getParameterName(), "Parameter is required"));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        return build(HttpStatus.BAD_REQUEST, "Validation failed",
-                Map.of(ex.getName(), "Invalid value"));
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(
+            MethodArgumentTypeMismatchException ex) {
+        return build(
+                HttpStatus.BAD_REQUEST, "Validation failed", Map.of(ex.getName(), "Invalid value"));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -60,7 +65,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex) {
         return build(HttpStatus.METHOD_NOT_ALLOWED, "HTTP method not supported", Map.of());
     }
 
@@ -81,9 +87,15 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", Map.of());
     }
 
-    private ResponseEntity<ErrorResponse> build(HttpStatus status, String message, Map<String, String> details) {
-        ErrorResponse body = new ErrorResponse(
-                LocalDateTime.now(), status.value(), status.getReasonPhrase(), message, details);
+    private ResponseEntity<ErrorResponse> build(
+            HttpStatus status, String message, Map<String, String> details) {
+        ErrorResponse body =
+                new ErrorResponse(
+                        LocalDateTime.now(),
+                        status.value(),
+                        status.getReasonPhrase(),
+                        message,
+                        details);
         return ResponseEntity.status(status).body(body);
     }
 }

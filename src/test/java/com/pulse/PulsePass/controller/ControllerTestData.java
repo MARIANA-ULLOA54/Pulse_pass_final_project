@@ -21,7 +21,8 @@ final class ControllerTestData {
 
     static final LocalDateTime EVENT_DATE = LocalDateTime.of(2026, 12, 20, 20, 0);
 
-    static final String VALID_EVENT_JSON = """
+    static final String VALID_EVENT_JSON =
+            """
             {
               "eventCode": "CMF-2026",
               "name": "Caribbean Music Fest 2026",
@@ -33,7 +34,8 @@ final class ControllerTestData {
             }
             """;
 
-    static final String VALID_USER_JSON = """
+    static final String VALID_USER_JSON =
+            """
             {
               "username": "andrea",
               "email": "andrea@email.com",
@@ -46,7 +48,8 @@ final class ControllerTestData {
             }
             """;
 
-    static final String VALID_PURCHASE_JSON = """
+    static final String VALID_PURCHASE_JSON =
+            """
             {
               "userEmail": "andrea@email.com",
               "eventCode": "CMF-2026",
@@ -54,12 +57,11 @@ final class ControllerTestData {
             }
             """;
 
-    private ControllerTestData() {
-    }
+    private ControllerTestData() {}
 
     static VenueResponse venue() {
-        return new VenueResponse(1L, "VEN-SMR-01", "Marina Convention Center", "Santa Marta",
-                "Calle 1", 3, true);
+        return new VenueResponse(
+                1L, "VEN-SMR-01", "Marina Convention Center", "Santa Marta", "Calle 1", 3, true);
     }
 
     static ArtistResponse artist() {
@@ -67,24 +69,55 @@ final class ControllerTestData {
     }
 
     static EventResponse event(EventStatus status) {
-        return new EventResponse(1L, "CMF-2026", "Caribbean Music Fest 2026", "Festival",
-                EventCategory.MUSIC, status, EVENT_DATE, 18, "VEN-SMR-01",
-                "Marina Convention Center", List.of(artist()));
+        return new EventResponse(
+                1L,
+                "CMF-2026",
+                "Caribbean Music Fest 2026",
+                "Festival",
+                EventCategory.MUSIC,
+                status,
+                EVENT_DATE,
+                18,
+                "VEN-SMR-01",
+                "Marina Convention Center",
+                List.of(artist()));
     }
 
     static EventSummaryResponse eventSummary() {
-        return new EventSummaryResponse(1L, "CMF-2026", "Caribbean Music Fest 2026", EventCategory.MUSIC,
-                EventStatus.PUBLISHED, EVENT_DATE, "VEN-SMR-01", "Marina Convention Center");
+        return new EventSummaryResponse(
+                1L,
+                "CMF-2026",
+                "Caribbean Music Fest 2026",
+                EventCategory.MUSIC,
+                EventStatus.PUBLISHED,
+                EVENT_DATE,
+                "VEN-SMR-01",
+                "Marina Convention Center");
     }
 
     static UserResponse user() {
-        return new UserResponse(1L, "andrea", "andrea@email.com", true, "Andrea", "Lopez",
-                "3001234567", "Santa Marta", LocalDate.of(2001, 5, 10));
+        return new UserResponse(
+                1L,
+                "andrea",
+                "andrea@email.com",
+                true,
+                "Andrea",
+                "Lopez",
+                "3001234567",
+                "Santa Marta",
+                LocalDate.of(2001, 5, 10));
     }
 
     static TicketResponse ticket(TicketStatus status) {
-        return new TicketResponse(1L, "TKT-0001", TicketType.VIP, new BigDecimal("125000.00"), status,
-                LocalDateTime.of(2026, 11, 18, 9, 0), "andrea@email.com", "CMF-2026",
+        return new TicketResponse(
+                1L,
+                "TKT-0001",
+                TicketType.VIP,
+                new BigDecimal("125000.00"),
+                status,
+                LocalDateTime.of(2026, 11, 18, 9, 0),
+                "andrea@email.com",
+                "CMF-2026",
                 "Caribbean Music Fest 2026");
     }
 }

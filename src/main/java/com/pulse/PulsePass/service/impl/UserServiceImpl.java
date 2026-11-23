@@ -25,10 +25,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final Clock clock;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           UserProfileRepository userProfileRepository,
-                           UserMapper userMapper,
-                           Clock clock) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            UserProfileRepository userProfileRepository,
+            UserMapper userMapper,
+            Clock clock) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
         this.userMapper = userMapper;
@@ -56,12 +57,13 @@ public class UserServiceImpl implements UserService {
 
         // BR-USER-003
         User user = new User(request.username(), request.email(), true);
-        UserProfile profile = new UserProfile(
-                request.firstName(),
-                request.lastName(),
-                request.phone(),
-                request.city(),
-                request.birthDate());
+        UserProfile profile =
+                new UserProfile(
+                        request.firstName(),
+                        request.lastName(),
+                        request.phone(),
+                        request.city(),
+                        request.birthDate());
         user.setProfile(profile);
 
         User savedUser = userRepository.save(user);
@@ -74,7 +76,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserResponse findByEmail(String email) {
-        return userRepository.findByEmailIgnoreCase(email)
+        return userRepository
+                .findByEmailIgnoreCase(email)
                 .map(userMapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + email));
     }
@@ -82,7 +85,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserResponse findByUsername(String username) {
-        return userRepository.findByUsername(username)
+        return userRepository
+                .findByUsername(username)
                 .map(userMapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
     }
@@ -93,7 +97,8 @@ public class UserServiceImpl implements UserService {
                 || isBlank(request.email())
                 || isBlank(request.firstName())
                 || isBlank(request.lastName())) {
-            throw new BusinessRuleException("username, email, firstName and lastName are required.");
+            throw new BusinessRuleException(
+                    "username, email, firstName and lastName are required.");
         }
     }
 

@@ -34,8 +34,7 @@ public class Artist {
     @ManyToMany(mappedBy = "artists")
     private Set<Event> events = new HashSet<>();
 
-    public Artist() {
-    }
+    public Artist() {}
 
     public Artist(String stageName, String country, String genre, boolean active) {
         this.stageName = stageName;
@@ -44,16 +43,45 @@ public class Artist {
         this.active = active;
     }
 
-    public Long getId() { return id; }
-    public String getStageName() { return stageName; }
-    public void setStageName(String stageName) { this.stageName = stageName; }
-    public String getCountry() { return country; }
-    public void setCountry(String country) { this.country = country; }
-    public String getGenre() { return genre; }
-    public void setGenre(String genre) { this.genre = genre; }
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
-    public Set<Event> getEvents() { return events; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getStageName() {
+        return stageName;
+    }
+
+    public void setStageName(String stageName) {
+        this.stageName = stageName;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
 
     @Override
     public boolean equals(Object o) {

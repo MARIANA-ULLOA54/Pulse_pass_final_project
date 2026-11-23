@@ -22,14 +22,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ArtistServiceImplTest {
 
-    @Mock
-    private ArtistRepository artistRepository;
-    @Mock
-    private ArtistMapper artistMapper;
-    @InjectMocks
-    private ArtistServiceImpl service;
+    @Mock private ArtistRepository artistRepository;
+    @Mock private ArtistMapper artistMapper;
+    @InjectMocks private ArtistServiceImpl service;
 
-    private final ArtistResponse response = new ArtistResponse(1L, "Solar Beat", "Colombia", "Pop", true);
+    private final ArtistResponse response =
+            new ArtistResponse(1L, "Solar Beat", "Colombia", "Pop", true);
 
     @Test
     void findById_existingArtist_returnsDto() {
@@ -44,7 +42,8 @@ class ArtistServiceImplTest {
     void findById_missingArtist_throwsResourceNotFound() {
         when(artistRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.findById(99L)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> service.findById(99L))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test

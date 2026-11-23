@@ -25,11 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockitoBean(types = JwtAuthenticationFilter.class)
 class VenueControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private VenueService venueService;
+    @MockitoBean private VenueService venueService;
 
     // TEST-CTRL-VEN-001 / AC-CTRL001
     @Test
@@ -49,7 +47,8 @@ class VenueControllerTest {
     // TEST-CTRL-VEN-002 / AC-CTRL002
     @Test
     void findByCode_missingVenue_returns404WithErrorResponse() throws Exception {
-        when(venueService.findByCode("NOPE")).thenThrow(new ResourceNotFoundException("Venue not found: NOPE"));
+        when(venueService.findByCode("NOPE"))
+                .thenThrow(new ResourceNotFoundException("Venue not found: NOPE"));
 
         mockMvc.perform(get("/api/venues/NOPE"))
                 .andExpect(status().isNotFound())
@@ -78,7 +77,8 @@ class VenueControllerTest {
     // Error inesperado -> 500 sin detalles internos (NFR-CTRL-007)
     @Test
     void unexpectedError_returns500WithoutInternalDetails() throws Exception {
-        when(venueService.findActiveVenues()).thenThrow(new IllegalStateException("db password leaked"));
+        when(venueService.findActiveVenues())
+                .thenThrow(new IllegalStateException("db password leaked"));
 
         mockMvc.perform(get("/api/venues/active"))
                 .andExpect(status().isInternalServerError())

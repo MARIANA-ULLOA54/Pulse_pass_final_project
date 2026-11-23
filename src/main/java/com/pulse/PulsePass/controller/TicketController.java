@@ -34,7 +34,8 @@ public class TicketController {
 
     @PreAuthorize("@authorizationService.ownEmail(#request.userEmail())")
     @PostMapping("/tickets")
-    public ResponseEntity<TicketResponse> purchase(@Valid @RequestBody PurchaseTicketRequest request) {
+    public ResponseEntity<TicketResponse> purchase(
+            @Valid @RequestBody PurchaseTicketRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.purchase(request));
     }
 
@@ -51,7 +52,8 @@ public class TicketController {
     }
 
     @GetMapping("/events/{eventCode}/tickets/paid")
-    public ResponseEntity<List<TicketResponse>> findPaidTicketsByEvent(@PathVariable String eventCode) {
+    public ResponseEntity<List<TicketResponse>> findPaidTicketsByEvent(
+            @PathVariable String eventCode) {
         return ResponseEntity.ok(ticketService.findPaidTicketsByEvent(eventCode));
     }
 

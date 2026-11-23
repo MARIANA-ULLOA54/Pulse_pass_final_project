@@ -24,7 +24,8 @@ public class VenueServiceImpl implements VenueService {
     @Override
     @Transactional(readOnly = true)
     public VenueResponse findByCode(String code) {
-        return venueRepository.findByCode(code)
+        return venueRepository
+                .findByCode(code)
                 .map(venueMapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Venue not found: " + code));
     }
@@ -32,8 +33,7 @@ public class VenueServiceImpl implements VenueService {
     @Override
     @Transactional(readOnly = true)
     public List<VenueResponse> findActiveVenues() {
-        return venueRepository.findByActiveTrueOrderByNameAsc()
-                .stream()
+        return venueRepository.findByActiveTrueOrderByNameAsc().stream()
                 .map(venueMapper::toResponse)
                 .toList();
     }

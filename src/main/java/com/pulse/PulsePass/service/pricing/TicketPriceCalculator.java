@@ -20,7 +20,8 @@ public class TicketPriceCalculator {
         if (type == null) {
             throw new BusinessRuleException("Ticket type is required.");
         }
-        BigDecimal price = BASE_PRICE.multiply(multiplierOf(type)).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal price =
+                BASE_PRICE.multiply(multiplierOf(type)).setScale(2, RoundingMode.HALF_UP);
         if (price.signum() < 0) {
             throw new BusinessRuleException("Ticket price cannot be negative.");
         }

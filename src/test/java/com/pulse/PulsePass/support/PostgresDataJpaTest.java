@@ -22,5 +22,4 @@ import java.lang.annotation.Target;
 @DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=validate")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(PostgresContainerConfig.class)
-public @interface PostgresDataJpaTest {
-}
+public @interface PostgresDataJpaTest {}

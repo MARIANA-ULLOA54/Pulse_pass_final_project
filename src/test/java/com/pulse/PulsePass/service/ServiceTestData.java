@@ -15,18 +15,26 @@ final class ServiceTestData {
 
     /** "Hoy" fijo: 2026-11-18T10:00. */
     static final Clock CLOCK = Clock.fixed(Instant.parse("2026-11-18T10:00:00Z"), ZoneOffset.UTC);
+
     static final LocalDateTime EVENT_DATE = LocalDateTime.of(2026, 12, 20, 20, 0);
 
-    private ServiceTestData() {
-    }
+    private ServiceTestData() {}
 
     static Venue venue(boolean active) {
-        return new Venue("VEN-SMR-01", "Marina Convention Center", "Santa Marta", "Calle 1", 3, active);
+        return new Venue(
+                "VEN-SMR-01", "Marina Convention Center", "Santa Marta", "Calle 1", 3, active);
     }
 
     static Event event(EventStatus status, Venue venue) {
-        return new Event("CMF-2026", "Caribbean Music Fest 2026", "Festival", EventCategory.MUSIC,
-                status, EVENT_DATE, 18, venue);
+        return new Event(
+                "CMF-2026",
+                "Caribbean Music Fest 2026",
+                "Festival",
+                EventCategory.MUSIC,
+                status,
+                EVENT_DATE,
+                18,
+                venue);
     }
 
     static Artist artist(String stageName) {
@@ -42,12 +50,26 @@ final class ServiceTestData {
     }
 
     static Ticket ticket(TicketStatus status, User user, Event event) {
-        return new Ticket("TKT-0001", TicketType.GENERAL, new BigDecimal("50000.00"), status,
-                LocalDateTime.of(2026, 11, 18, 9, 0), user, event);
+        return new Ticket(
+                "TKT-0001",
+                TicketType.GENERAL,
+                new BigDecimal("50000.00"),
+                status,
+                LocalDateTime.of(2026, 11, 18, 9, 0),
+                user,
+                event);
     }
 
     static TicketResponse toResponse(Ticket t) {
-        return new TicketResponse(t.getId(), t.getTicketCode(), t.getType(), t.getPrice(), t.getStatus(),
-                t.getPurchaseDate(), t.getUser().getEmail(), t.getEvent().getEventCode(), t.getEvent().getName());
+        return new TicketResponse(
+                t.getId(),
+                t.getTicketCode(),
+                t.getType(),
+                t.getPrice(),
+                t.getStatus(),
+                t.getPurchaseDate(),
+                t.getUser().getEmail(),
+                t.getEvent().getEventCode(),
+                t.getEvent().getName());
     }
 }

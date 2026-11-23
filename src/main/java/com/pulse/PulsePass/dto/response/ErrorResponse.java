@@ -9,6 +9,4 @@ public record ErrorResponse(
         int status,
         String error,
         String message,
-        Map<String, String> details
-) {
-}
+        Map<String, String> details) {}

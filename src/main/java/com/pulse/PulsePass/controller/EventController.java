@@ -27,7 +27,9 @@ public class EventController {
     private final EventService eventService;
     private final com.pulse.PulsePass.service.AuthorizationService authorizationService;
 
-    public EventController(EventService eventService, com.pulse.PulsePass.service.AuthorizationService authorizationService) {
+    public EventController(
+            EventService eventService,
+            com.pulse.PulsePass.service.AuthorizationService authorizationService) {
         this.eventService = eventService;
         this.authorizationService = authorizationService;
     }
@@ -54,14 +56,20 @@ public class EventController {
     }
 
     @PostMapping("/{eventCode}/artists/{artistId}")
-    public ResponseEntity<EventResponse> addArtist(@PathVariable String eventCode,
-                                                   @PathVariable Long artistId) {
+    public ResponseEntity<EventResponse> addArtist(
+            @PathVariable String eventCode, @PathVariable Long artistId) {
         return ResponseEntity.ok(eventService.addArtist(eventCode, artistId));
     }
 
     @GetMapping("/by-artist")
     public ResponseEntity<List<EventSummaryResponse>> findByArtist(@RequestParam String stageName) {
-        return ResponseEntity.ok(eventService.findByArtist(stageName).stream().filter(e -> e.status() == EventStatus.PUBLISHED || canSeeUnpublished()).toList());
+        return ResponseEntity.ok(
+                eventService.findByArtist(stageName).stream()
+                        .filter(e -> e.status() == EventStatus.PUBLISHED || canSeeUnpublished())
+                        .toList());
     }
-    private boolean canSeeUnpublished() { return authorizationService.canReadOtherEvents(); }
+
+    private boolean canSeeUnpublished() {
+        return authorizationService.canReadOtherEvents();
+    }
 }

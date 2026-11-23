@@ -24,7 +24,8 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     @Transactional(readOnly = true)
     public ArtistResponse findById(Long id) {
-        return artistRepository.findById(id)
+        return artistRepository
+                .findById(id)
                 .map(artistMapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist not found: " + id));
     }
@@ -32,7 +33,8 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     @Transactional(readOnly = true)
     public ArtistResponse findByStageName(String stageName) {
-        return artistRepository.findByStageNameIgnoreCase(stageName)
+        return artistRepository
+                .findByStageNameIgnoreCase(stageName)
                 .map(artistMapper::toResponse)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist not found: " + stageName));
     }
@@ -40,8 +42,7 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     @Transactional(readOnly = true)
     public List<ArtistResponse> findActiveArtists() {
-        return artistRepository.findByActiveTrueOrderByStageNameAsc()
-                .stream()
+        return artistRepository.findByActiveTrueOrderByStageNameAsc().stream()
                 .map(artistMapper::toResponse)
                 .toList();
     }

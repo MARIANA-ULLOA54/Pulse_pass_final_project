@@ -15,5 +15,4 @@ public record TicketResponse(
         LocalDateTime purchaseDate,
         String userEmail,
         String eventCode,
-        String eventName
-) {}
+        String eventName) {}

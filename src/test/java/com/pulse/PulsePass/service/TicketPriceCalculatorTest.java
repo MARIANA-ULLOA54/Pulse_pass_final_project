@@ -42,6 +42,7 @@ class TicketPriceCalculatorTest {
 
     @Test
     void calculate_nullType_throwsBusinessRule() {
-        assertThatThrownBy(() -> calculator.calculate(null)).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> calculator.calculate(null))
+                .isInstanceOf(BusinessRuleException.class);
     }
 }

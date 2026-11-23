@@ -33,30 +33,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockitoBean(types = JwtAuthenticationFilter.class)
 class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private UserService userService;
+    @MockitoBean private UserService userService;
 
-    @MockitoBean
-    private AuthService authService;
+    @MockitoBean private AuthService authService;
 
     // TEST-CTRL-USR-001 / AC-CTRL007
     @Test
     void register_validRequest_returns201() throws Exception {
-        when(authService.register(any(RegisterUserRequest.class))).thenReturn(ControllerTestData.user());
+        when(authService.register(any(RegisterUserRequest.class)))
+                .thenReturn(ControllerTestData.user());
 
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ControllerTestData.VALID_USER_JSON))
+        mockMvc.perform(
+                        post("/api/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ControllerTestData.VALID_USER_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.username").value("andrea"))
                 .andExpect(jsonPath("$.email").value("andrea@email.com"))
                 .andExpect(jsonPath("$.active").value(true));
 
-        ArgumentCaptor<RegisterUserRequest> captor = ArgumentCaptor.forClass(RegisterUserRequest.class);
+        ArgumentCaptor<RegisterUserRequest> captor =
+                ArgumentCaptor.forClass(RegisterUserRequest.class);
         verify(authService).register(captor.capture());
         assertThat(captor.getValue().birthDate()).isEqualTo(LocalDate.of(2001, 5, 10));
     }
@@ -64,11 +64,13 @@ class UserControllerTest {
     // TEST-CTRL-USR-002
     @Test
     void register_invalidEmail_returns400AndDoesNotCallService() throws Exception {
-        String invalidEmail = ControllerTestData.VALID_USER_JSON.replace("andrea@email.com", "not-an-email");
+        String invalidEmail =
+                ControllerTestData.VALID_USER_JSON.replace("andrea@email.com", "not-an-email");
 
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalidEmail))
+        mockMvc.perform(
+                        post("/api/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(invalidEmail))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Validation failed"))
@@ -79,9 +81,7 @@ class UserControllerTest {
 
     @Test
     void register_missingRequiredFields_returns400AndDoesNotCallService() throws Exception {
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+        mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.details.username").exists())
                 .andExpect(jsonPath("$.details.email").exists())
@@ -98,9 +98,10 @@ class UserControllerTest {
         when(authService.register(any(RegisterUserRequest.class)))
                 .thenThrow(new DuplicateResourceException("Username already exists."));
 
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ControllerTestData.VALID_USER_JSON))
+        mockMvc.perform(
+                        post("/api/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ControllerTestData.VALID_USER_JSON))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message").value("Username already exists."));
@@ -120,7 +121,8 @@ class UserControllerTest {
 
     @Test
     void findByEmail_missingUser_returns404() throws Exception {
-        when(userService.findByEmail("x@email.com")).thenThrow(new ResourceNotFoundException("User not found: x@email.com"));
+        when(userService.findByEmail("x@email.com"))
+                .thenThrow(new ResourceNotFoundException("User not found: x@email.com"));
 
         mockMvc.perform(get("/api/users/by-email").param("email", "x@email.com"))
                 .andExpect(status().isNotFound());

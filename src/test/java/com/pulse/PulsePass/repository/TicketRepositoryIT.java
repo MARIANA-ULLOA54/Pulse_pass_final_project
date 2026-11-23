@@ -27,18 +27,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @PostgresDataJpaTest
 class TicketRepositoryIT {
 
-    @Autowired
-    private TicketRepository ticketRepository;
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private VenueRepository venueRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private EntityManager entityManager;
-    @Autowired
-    private JdbcTemplate jdbc;
+    @Autowired private TicketRepository ticketRepository;
+    @Autowired private EventRepository eventRepository;
+    @Autowired private VenueRepository venueRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private EntityManager entityManager;
+    @Autowired private JdbcTemplate jdbc;
 
     private Event event;
     private User andrea;
@@ -50,16 +44,41 @@ class TicketRepositoryIT {
     @BeforeEach
     void setUp() {
         Venue venue = venueRepository.save(TestData.marinaConventionCenter());
-        event = eventRepository.save(TestData.event("CMF-2026", venue, EventStatus.PUBLISHED, TestData.FUTURE));
+        event =
+                eventRepository.save(
+                        TestData.event("CMF-2026", venue, EventStatus.PUBLISHED, TestData.FUTURE));
         andrea = userRepository.save(TestData.user("andrea", "andrea@pulse.com"));
         carlos = userRepository.save(TestData.user("carlos", "carlos@pulse.com"));
         laura = userRepository.save(TestData.user("laura", "laura@pulse.com"));
         miguel = userRepository.save(TestData.user("miguel", "miguel@pulse.com"));
 
-        ticketRepository.save(TestData.ticket("TCK-0001", andrea, event, TicketType.VIP, TicketStatus.PAID, "250000"));
-        ticketRepository.save(TestData.ticket("TCK-0002", carlos, event, TicketType.GENERAL, TicketStatus.PAID, "120000"));
-        ticketRepository.save(TestData.ticket("TCK-0003", laura, event, TicketType.GENERAL, TicketStatus.RESERVED, "120000"));
-        ticketRepository.save(TestData.ticket("TCK-0004", miguel, event, TicketType.VIP, TicketStatus.CANCELLED, "250000"));
+        ticketRepository.save(
+                TestData.ticket(
+                        "TCK-0001", andrea, event, TicketType.VIP, TicketStatus.PAID, "250000"));
+        ticketRepository.save(
+                TestData.ticket(
+                        "TCK-0002",
+                        carlos,
+                        event,
+                        TicketType.GENERAL,
+                        TicketStatus.PAID,
+                        "120000"));
+        ticketRepository.save(
+                TestData.ticket(
+                        "TCK-0003",
+                        laura,
+                        event,
+                        TicketType.GENERAL,
+                        TicketStatus.RESERVED,
+                        "120000"));
+        ticketRepository.save(
+                TestData.ticket(
+                        "TCK-0004",
+                        miguel,
+                        event,
+                        TicketType.VIP,
+                        TicketStatus.CANCELLED,
+                        "250000"));
         ticketRepository.flush();
         entityManager.clear();
     }
@@ -82,8 +101,16 @@ class TicketRepositoryIT {
         User user = userRepository.findByUsername("laura").orElseThrow();
         Event ev = eventRepository.findByEventCode("CMF-2026").orElseThrow();
 
-        assertThatThrownBy(() -> ticketRepository.saveAndFlush(
-                TestData.ticket("TCK-0001", user, ev, TicketType.STUDENT, TicketStatus.RESERVED, "50000")))
+        assertThatThrownBy(
+                        () ->
+                                ticketRepository.saveAndFlush(
+                                        TestData.ticket(
+                                                "TCK-0001",
+                                                user,
+                                                ev,
+                                                TicketType.STUDENT,
+                                                TicketStatus.RESERVED,
+                                                "50000")))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -93,21 +120,33 @@ class TicketRepositoryIT {
         User user = userRepository.findByUsername("laura").orElseThrow();
         Event ev = eventRepository.findByEventCode("CMF-2026").orElseThrow();
 
-        Ticket free = ticketRepository.saveAndFlush(
-                TestData.ticket("TCK-FREE", user, ev, TicketType.STUDENT, TicketStatus.PAID, "0"));
+        Ticket free =
+                ticketRepository.saveAndFlush(
+                        TestData.ticket(
+                                "TCK-FREE", user, ev, TicketType.STUDENT, TicketStatus.PAID, "0"));
         assertThat(free.getId()).isNotNull();
 
-        assertThatThrownBy(() -> ticketRepository.saveAndFlush(
-                TestData.ticket("TCK-NEG", user, ev, TicketType.GENERAL, TicketStatus.PAID, "-1")))
+        assertThatThrownBy(
+                        () ->
+                                ticketRepository.saveAndFlush(
+                                        TestData.ticket(
+                                                "TCK-NEG",
+                                                user,
+                                                ev,
+                                                TicketType.GENERAL,
+                                                TicketStatus.PAID,
+                                                "-1")))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
     @DisplayName("FR-TKT-001: la BD rechaza un ticket cuyo usuario o evento no existe")
     void rejectsTicketWithoutValidForeignKeys() {
-        assertThatThrownBy(() -> jdbc.update(
-                "INSERT INTO tickets (ticket_code, type, price, status, purchase_date, user_id, event_id) "
-                        + "VALUES ('TCK-FK', 'GENERAL', 10, 'PAID', now(), -1, -1)"))
+        assertThatThrownBy(
+                        () ->
+                                jdbc.update(
+                                        "INSERT INTO tickets (ticket_code, type, price, status, purchase_date, user_id, event_id) "
+                                                + "VALUES ('TCK-FK', 'GENERAL', 10, 'PAID', now(), -1, -1)"))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -117,9 +156,13 @@ class TicketRepositoryIT {
         Long userId = andrea.getId();
         Long eventId = event.getId();
 
-        assertThatThrownBy(() -> jdbc.update(
-                "INSERT INTO tickets (ticket_code, type, price, status, purchase_date, user_id, event_id) "
-                        + "VALUES ('TCK-T', 'PLATINUM', 10, 'PAID', now(), ?, ?)", userId, eventId))
+        assertThatThrownBy(
+                        () ->
+                                jdbc.update(
+                                        "INSERT INTO tickets (ticket_code, type, price, status, purchase_date, user_id, event_id) "
+                                                + "VALUES ('TCK-T', 'PLATINUM', 10, 'PAID', now(), ?, ?)",
+                                        userId,
+                                        eventId))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -129,9 +172,13 @@ class TicketRepositoryIT {
         Long userId = andrea.getId();
         Long eventId = event.getId();
 
-        assertThatThrownBy(() -> jdbc.update(
-                "INSERT INTO tickets (ticket_code, type, price, status, purchase_date, user_id, event_id) "
-                        + "VALUES ('TCK-S', 'GENERAL', 10, 'REFUNDED', now(), ?, ?)", userId, eventId))
+        assertThatThrownBy(
+                        () ->
+                                jdbc.update(
+                                        "INSERT INTO tickets (ticket_code, type, price, status, purchase_date, user_id, event_id) "
+                                                + "VALUES ('TCK-S', 'GENERAL', 10, 'REFUNDED', now(), ?, ?)",
+                                        userId,
+                                        eventId))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -141,11 +188,14 @@ class TicketRepositoryIT {
         User user = userRepository.findByUsername("laura").orElseThrow();
         Event ev = eventRepository.findByEventCode("CMF-2026").orElseThrow();
         ticketRepository.saveAndFlush(
-                TestData.ticket("TCK-DEC", user, ev, TicketType.GENERAL, TicketStatus.PAID, "99999.99"));
+                TestData.ticket(
+                        "TCK-DEC", user, ev, TicketType.GENERAL, TicketStatus.PAID, "99999.99"));
         entityManager.clear();
 
-        BigDecimal stored = jdbc.queryForObject(
-                "SELECT price FROM tickets WHERE ticket_code = 'TCK-DEC'", BigDecimal.class);
+        BigDecimal stored =
+                jdbc.queryForObject(
+                        "SELECT price FROM tickets WHERE ticket_code = 'TCK-DEC'",
+                        BigDecimal.class);
 
         assertThat(stored).isEqualByComparingTo("99999.99");
     }
@@ -161,24 +211,34 @@ class TicketRepositoryIT {
     @Test
     @DisplayName("FR-TKT-006: tickets de un usuario por email y estado")
     void findsTicketsByUserEmailAndStatus() {
-        assertThat(ticketRepository.findByUser_EmailAndStatus("laura@pulse.com", TicketStatus.RESERVED))
-                .extracting(Ticket::getTicketCode).containsExactly("TCK-0003");
-        assertThat(ticketRepository.findByUser_EmailAndStatus("laura@pulse.com", TicketStatus.PAID)).isEmpty();
+        assertThat(
+                        ticketRepository.findByUser_EmailAndStatus(
+                                "laura@pulse.com", TicketStatus.RESERVED))
+                .extracting(Ticket::getTicketCode)
+                .containsExactly("TCK-0003");
+        assertThat(ticketRepository.findByUser_EmailAndStatus("laura@pulse.com", TicketStatus.PAID))
+                .isEmpty();
     }
 
     @Test
     @DisplayName("FR-TKT-007: solo se retornan los tickets PAID del evento solicitado")
     void findsPaidTicketsByEventCode() {
-        List<Ticket> paid = ticketRepository.findByEvent_EventCodeAndStatus("CMF-2026", TicketStatus.PAID);
+        List<Ticket> paid =
+                ticketRepository.findByEvent_EventCodeAndStatus("CMF-2026", TicketStatus.PAID);
 
-        assertThat(paid).extracting(Ticket::getTicketCode).containsExactlyInAnyOrder("TCK-0001", "TCK-0002");
+        assertThat(paid)
+                .extracting(Ticket::getTicketCode)
+                .containsExactlyInAnyOrder("TCK-0001", "TCK-0002");
     }
 
     @Test
     @DisplayName("AC-008 / FR-TKT-008: el conteo de ventas solo incluye tickets PAID")
     void countsOnlyPaidTickets() {
-        assertThat(ticketRepository.countByEventCodeAndStatus("CMF-2026", TicketStatus.PAID)).isEqualTo(2L);
-        assertThat(ticketRepository.countByEventCodeAndStatus("CMF-2026", TicketStatus.RESERVED)).isEqualTo(1L);
-        assertThat(ticketRepository.countByEventCodeAndStatus("NO-EXISTE", TicketStatus.PAID)).isZero();
+        assertThat(ticketRepository.countByEventCodeAndStatus("CMF-2026", TicketStatus.PAID))
+                .isEqualTo(2L);
+        assertThat(ticketRepository.countByEventCodeAndStatus("CMF-2026", TicketStatus.RESERVED))
+                .isEqualTo(1L);
+        assertThat(ticketRepository.countByEventCodeAndStatus("NO-EXISTE", TicketStatus.PAID))
+                .isZero();
     }
 }

@@ -17,5 +17,4 @@ public record EventResponse(
         int minimumAge,
         String venueCode,
         String venueName,
-        List<ArtistResponse> artists
-) {}
+        List<ArtistResponse> artists) {}

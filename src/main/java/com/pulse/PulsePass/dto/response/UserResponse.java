@@ -11,5 +11,4 @@ public record UserResponse(
         String lastName,
         String phone,
         String city,
-        LocalDate birthDate
-) {}
+        LocalDate birthDate) {}

@@ -7,5 +7,4 @@ public record VenueResponse(
         String city,
         String address,
         Integer capacity,
-        boolean active
-) {}
+        boolean active) {}

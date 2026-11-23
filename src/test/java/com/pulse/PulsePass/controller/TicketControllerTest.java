@@ -35,11 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockitoBean(types = JwtAuthenticationFilter.class)
 class TicketControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private TicketService ticketService;
+    @MockitoBean private TicketService ticketService;
 
     // TEST-CTRL-TKT-001 / AC-CTRL009
     @Test
@@ -47,9 +45,10 @@ class TicketControllerTest {
         when(ticketService.purchase(any(PurchaseTicketRequest.class)))
                 .thenReturn(ControllerTestData.ticket(TicketStatus.PAID));
 
-        mockMvc.perform(post("/api/tickets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ControllerTestData.VALID_PURCHASE_JSON))
+        mockMvc.perform(
+                        post("/api/tickets")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ControllerTestData.VALID_PURCHASE_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.ticketCode").value("TKT-0001"))
@@ -58,7 +57,8 @@ class TicketControllerTest {
                 .andExpect(jsonPath("$.userEmail").value("andrea@email.com"))
                 .andExpect(jsonPath("$.eventCode").value("CMF-2026"));
 
-        ArgumentCaptor<PurchaseTicketRequest> captor = ArgumentCaptor.forClass(PurchaseTicketRequest.class);
+        ArgumentCaptor<PurchaseTicketRequest> captor =
+                ArgumentCaptor.forClass(PurchaseTicketRequest.class);
         verify(ticketService).purchase(captor.capture());
         assertThat(captor.getValue().type()).isEqualTo(TicketType.VIP);
     }
@@ -66,13 +66,15 @@ class TicketControllerTest {
     // TEST-CTRL-TKT-002
     @Test
     void purchase_invalidRequest_returns400AndDoesNotCallService() throws Exception {
-        String invalid = """
+        String invalid =
+                """
                 {"userEmail": "not-an-email", "eventCode": ""}
                 """;
 
-        mockMvc.perform(post("/api/tickets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalid))
+        mockMvc.perform(
+                        post("/api/tickets")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(invalid))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.details.userEmail").exists())
@@ -86,9 +88,10 @@ class TicketControllerTest {
     void purchase_unknownTicketType_returns400AndDoesNotCallService() throws Exception {
         String unknownType = ControllerTestData.VALID_PURCHASE_JSON.replace("VIP", "PLATINUM");
 
-        mockMvc.perform(post("/api/tickets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(unknownType))
+        mockMvc.perform(
+                        post("/api/tickets")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(unknownType))
                 .andExpect(status().isBadRequest());
 
         verify(ticketService, never()).purchase(any());
@@ -100,9 +103,10 @@ class TicketControllerTest {
         when(ticketService.purchase(any(PurchaseTicketRequest.class)))
                 .thenThrow(new ResourceNotFoundException("User not found: andrea@email.com"));
 
-        mockMvc.perform(post("/api/tickets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ControllerTestData.VALID_PURCHASE_JSON))
+        mockMvc.perform(
+                        post("/api/tickets")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ControllerTestData.VALID_PURCHASE_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("User not found: andrea@email.com"));
     }
@@ -113,9 +117,10 @@ class TicketControllerTest {
         when(ticketService.purchase(any(PurchaseTicketRequest.class)))
                 .thenThrow(new BusinessRuleException("User does not meet minimum age."));
 
-        mockMvc.perform(post("/api/tickets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ControllerTestData.VALID_PURCHASE_JSON))
+        mockMvc.perform(
+                        post("/api/tickets")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ControllerTestData.VALID_PURCHASE_JSON))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.error").value("Conflict"))
@@ -125,7 +130,8 @@ class TicketControllerTest {
     // TEST-CTRL-TKT-005
     @Test
     void findByCode_returns200() throws Exception {
-        when(ticketService.findByCode("TKT-0001")).thenReturn(ControllerTestData.ticket(TicketStatus.PAID));
+        when(ticketService.findByCode("TKT-0001"))
+                .thenReturn(ControllerTestData.ticket(TicketStatus.PAID));
 
         mockMvc.perform(get("/api/tickets/TKT-0001"))
                 .andExpect(status().isOk())
@@ -136,10 +142,10 @@ class TicketControllerTest {
 
     @Test
     void findByCode_missingTicket_returns404() throws Exception {
-        when(ticketService.findByCode("NOPE")).thenThrow(new ResourceNotFoundException("Ticket not found: NOPE"));
+        when(ticketService.findByCode("NOPE"))
+                .thenThrow(new ResourceNotFoundException("Ticket not found: NOPE"));
 
-        mockMvc.perform(get("/api/tickets/NOPE"))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/tickets/NOPE")).andExpect(status().isNotFound());
     }
 
     // TEST-CTRL-TKT-006
@@ -175,14 +181,14 @@ class TicketControllerTest {
         when(ticketService.findPaidTicketsByEvent("NOPE"))
                 .thenThrow(new ResourceNotFoundException("Event not found: NOPE"));
 
-        mockMvc.perform(get("/api/events/NOPE/tickets/paid"))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/events/NOPE/tickets/paid")).andExpect(status().isNotFound());
     }
 
     // TEST-CTRL-TKT-008 / AC-CTRL011
     @Test
     void cancel_paidTicket_returns200() throws Exception {
-        when(ticketService.cancel("TKT-0001")).thenReturn(ControllerTestData.ticket(TicketStatus.CANCELLED));
+        when(ticketService.cancel("TKT-0001"))
+                .thenReturn(ControllerTestData.ticket(TicketStatus.CANCELLED));
 
         mockMvc.perform(patch("/api/tickets/TKT-0001/cancel"))
                 .andExpect(status().isOk())
@@ -195,7 +201,9 @@ class TicketControllerTest {
     @Test
     void cancel_usedTicket_returns409() throws Exception {
         when(ticketService.cancel("TKT-0001"))
-                .thenThrow(new BusinessRuleException("Only PAID tickets can be cancelled. Current status: USED"));
+                .thenThrow(
+                        new BusinessRuleException(
+                                "Only PAID tickets can be cancelled. Current status: USED"));
 
         mockMvc.perform(patch("/api/tickets/TKT-0001/cancel"))
                 .andExpect(status().isConflict())
@@ -205,7 +213,8 @@ class TicketControllerTest {
     // TEST-CTRL-TKT-010 / AC-CTRL013
     @Test
     void markAsUsed_paidTicket_returns200() throws Exception {
-        when(ticketService.markAsUsed("TKT-0001")).thenReturn(ControllerTestData.ticket(TicketStatus.USED));
+        when(ticketService.markAsUsed("TKT-0001"))
+                .thenReturn(ControllerTestData.ticket(TicketStatus.USED));
 
         mockMvc.perform(patch("/api/tickets/TKT-0001/use"))
                 .andExpect(status().isOk())
@@ -218,10 +227,12 @@ class TicketControllerTest {
     @Test
     void markAsUsed_cancelledTicket_returns409() throws Exception {
         when(ticketService.markAsUsed("TKT-0001"))
-                .thenThrow(new BusinessRuleException("A CANCELLED ticket cannot be used: TKT-0001"));
+                .thenThrow(
+                        new BusinessRuleException("A CANCELLED ticket cannot be used: TKT-0001"));
 
         mockMvc.perform(patch("/api/tickets/TKT-0001/use"))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("A CANCELLED ticket cannot be used: TKT-0001"));
+                .andExpect(
+                        jsonPath("$.message").value("A CANCELLED ticket cannot be used: TKT-0001"));
     }
 }

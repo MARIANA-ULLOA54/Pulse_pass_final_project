@@ -38,21 +38,23 @@ class TicketServiceImplTest {
 
     private static final String EVENT = "CMF-2026";
 
-    @Mock
-    private TicketRepository ticketRepository;
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private EventRepository eventRepository;
-    @Mock
-    private TicketMapper ticketMapper;
+    @Mock private TicketRepository ticketRepository;
+    @Mock private UserRepository userRepository;
+    @Mock private EventRepository eventRepository;
+    @Mock private TicketMapper ticketMapper;
 
     private TicketServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new TicketServiceImpl(ticketRepository, userRepository, eventRepository, ticketMapper,
-                new TicketPriceCalculator(), ServiceTestData.CLOCK);
+        service =
+                new TicketServiceImpl(
+                        ticketRepository,
+                        userRepository,
+                        eventRepository,
+                        ticketMapper,
+                        new TicketPriceCalculator(),
+                        ServiceTestData.CLOCK);
     }
 
     private PurchaseTicketRequest purchaseBy(User user, TicketType type) {
@@ -76,7 +78,8 @@ class TicketServiceImplTest {
     }
 
     private void stubPaidCount(long count) {
-        when(ticketRepository.countByEventCodeAndStatus(EVENT, TicketStatus.PAID)).thenReturn(count);
+        when(ticketRepository.countByEventCodeAndStatus(EVENT, TicketStatus.PAID))
+                .thenReturn(count);
     }
 
     private void stubSaveAndMapper() {
@@ -112,7 +115,11 @@ class TicketServiceImplTest {
     void purchase_missingUser_throwsResourceNotFound() {
         when(userRepository.findByEmailIgnoreCase("ghost@email.com")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.purchase(new PurchaseTicketRequest("ghost@email.com", EVENT, TicketType.GENERAL)))
+        assertThatThrownBy(
+                        () ->
+                                service.purchase(
+                                        new PurchaseTicketRequest(
+                                                "ghost@email.com", EVENT, TicketType.GENERAL)))
                 .isInstanceOf(ResourceNotFoundException.class);
 
         verify(ticketRepository, never()).save(any());
@@ -221,7 +228,8 @@ class TicketServiceImplTest {
         stubPaidCount(0);
         stubSaveAndMapper();
 
-        assertThat(service.purchase(purchaseBy(laura, TicketType.STUDENT)).status()).isEqualTo(TicketStatus.PAID);
+        assertThat(service.purchase(purchaseBy(laura, TicketType.STUDENT)).status())
+                .isEqualTo(TicketStatus.PAID);
     }
 
     // TEST-TICKET-007 / AC-009
@@ -263,8 +271,11 @@ class TicketServiceImplTest {
         Ticket ticket = ServiceTestData.ticket(TicketStatus.PAID, andrea(), publishedEvent());
         when(ticketRepository.findByTicketCode("TKT-0001")).thenReturn(Optional.of(ticket));
         when(ticketRepository.save(ticket)).thenReturn(ticket);
-        when(ticketMapper.toResponse(ticket)).thenAnswer(invocation ->
-                ServiceTestData.toResponse(invocation.getArgument(0, Ticket.class)));
+        when(ticketMapper.toResponse(ticket))
+                .thenAnswer(
+                        invocation ->
+                                ServiceTestData.toResponse(
+                                        invocation.getArgument(0, Ticket.class)));
 
         TicketResponse result = service.cancel("TKT-0001");
 
@@ -278,7 +289,8 @@ class TicketServiceImplTest {
         Ticket ticket = ServiceTestData.ticket(TicketStatus.USED, andrea(), publishedEvent());
         when(ticketRepository.findByTicketCode("TKT-0001")).thenReturn(Optional.of(ticket));
 
-        assertThatThrownBy(() -> service.cancel("TKT-0001")).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> service.cancel("TKT-0001"))
+                .isInstanceOf(BusinessRuleException.class);
 
         assertThat(ticket.getStatus()).isEqualTo(TicketStatus.USED);
         verify(ticketRepository, never()).save(any());
@@ -289,7 +301,8 @@ class TicketServiceImplTest {
         Ticket ticket = ServiceTestData.ticket(TicketStatus.CANCELLED, andrea(), publishedEvent());
         when(ticketRepository.findByTicketCode("TKT-0001")).thenReturn(Optional.of(ticket));
 
-        assertThatThrownBy(() -> service.cancel("TKT-0001")).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> service.cancel("TKT-0001"))
+                .isInstanceOf(BusinessRuleException.class);
 
         verify(ticketRepository, never()).save(any());
     }
@@ -302,7 +315,8 @@ class TicketServiceImplTest {
         Ticket ticket = ServiceTestData.ticket(TicketStatus.PAID, andrea(), event);
         when(ticketRepository.findByTicketCode("TKT-0001")).thenReturn(Optional.of(ticket));
 
-        assertThatThrownBy(() -> service.cancel("TKT-0001")).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> service.cancel("TKT-0001"))
+                .isInstanceOf(BusinessRuleException.class);
 
         verify(ticketRepository, never()).save(any());
     }
@@ -313,8 +327,11 @@ class TicketServiceImplTest {
         Ticket ticket = ServiceTestData.ticket(TicketStatus.PAID, andrea(), publishedEvent());
         when(ticketRepository.findByTicketCode("TKT-0001")).thenReturn(Optional.of(ticket));
         when(ticketRepository.save(ticket)).thenReturn(ticket);
-        when(ticketMapper.toResponse(ticket)).thenAnswer(invocation ->
-                ServiceTestData.toResponse(invocation.getArgument(0, Ticket.class)));
+        when(ticketMapper.toResponse(ticket))
+                .thenAnswer(
+                        invocation ->
+                                ServiceTestData.toResponse(
+                                        invocation.getArgument(0, Ticket.class)));
 
         TicketResponse result = service.markAsUsed("TKT-0001");
 
@@ -327,7 +344,8 @@ class TicketServiceImplTest {
         Ticket ticket = ServiceTestData.ticket(TicketStatus.CANCELLED, andrea(), publishedEvent());
         when(ticketRepository.findByTicketCode("TKT-0001")).thenReturn(Optional.of(ticket));
 
-        assertThatThrownBy(() -> service.markAsUsed("TKT-0001")).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> service.markAsUsed("TKT-0001"))
+                .isInstanceOf(BusinessRuleException.class);
 
         verify(ticketRepository, never()).save(any());
     }
@@ -336,7 +354,8 @@ class TicketServiceImplTest {
     void findByCode_missingTicket_throwsResourceNotFound() {
         when(ticketRepository.findByTicketCode("NOPE")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.findByCode("NOPE")).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> service.findByCode("NOPE"))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test

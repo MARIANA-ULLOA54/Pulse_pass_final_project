@@ -37,14 +37,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockitoBean(types = JwtAuthenticationFilter.class)
 class EventControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private EventService eventService;
+    @MockitoBean private EventService eventService;
 
-    @MockitoBean
-    private AuthorizationService authorizationService;
+    @MockitoBean private AuthorizationService authorizationService;
 
     // TEST-CTRL-EVT-001 / AC-CTRL003
     @Test
@@ -52,16 +49,18 @@ class EventControllerTest {
         when(eventService.create(any(CreateEventRequest.class)))
                 .thenReturn(ControllerTestData.event(EventStatus.DRAFT));
 
-        mockMvc.perform(post("/api/events")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ControllerTestData.VALID_EVENT_JSON))
+        mockMvc.perform(
+                        post("/api/events")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ControllerTestData.VALID_EVENT_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.eventCode").value("CMF-2026"))
                 .andExpect(jsonPath("$.status").value("DRAFT"))
                 .andExpect(jsonPath("$.venueCode").value("VEN-SMR-01"));
 
-        ArgumentCaptor<CreateEventRequest> captor = ArgumentCaptor.forClass(CreateEventRequest.class);
+        ArgumentCaptor<CreateEventRequest> captor =
+                ArgumentCaptor.forClass(CreateEventRequest.class);
         verify(eventService).create(captor.capture());
         assertThat(captor.getValue().eventCode()).isEqualTo("CMF-2026");
         assertThat(captor.getValue().category()).isEqualTo(EventCategory.MUSIC);
@@ -71,13 +70,15 @@ class EventControllerTest {
     // TEST-CTRL-EVT-002 / AC-CTRL004
     @Test
     void create_invalidRequest_returns400WithFieldDetailsAndDoesNotCallService() throws Exception {
-        String invalid = """
+        String invalid =
+                """
                 {"eventCode": "", "name": " ", "minimumAge": -1, "venueCode": ""}
                 """;
 
-        mockMvc.perform(post("/api/events")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalid))
+        mockMvc.perform(
+                        post("/api/events")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(invalid))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(400))
@@ -95,9 +96,10 @@ class EventControllerTest {
 
     @Test
     void create_malformedJson_returns400AndDoesNotCallService() throws Exception {
-        mockMvc.perform(post("/api/events")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ not json"))
+        mockMvc.perform(
+                        post("/api/events")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{ not json"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Malformed JSON request"));
 
@@ -109,9 +111,10 @@ class EventControllerTest {
         when(eventService.create(any(CreateEventRequest.class)))
                 .thenThrow(new DuplicateResourceException("Event already exists: CMF-2026"));
 
-        mockMvc.perform(post("/api/events")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(ControllerTestData.VALID_EVENT_JSON))
+        mockMvc.perform(
+                        post("/api/events")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ControllerTestData.VALID_EVENT_JSON))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.error").value("Conflict"));
@@ -120,7 +123,8 @@ class EventControllerTest {
     // TEST-CTRL-EVT-003
     @Test
     void findByCode_existingEvent_returns200() throws Exception {
-        when(eventService.findByCode("CMF-2026")).thenReturn(ControllerTestData.event(EventStatus.DRAFT));
+        when(eventService.findByCode("CMF-2026"))
+                .thenReturn(ControllerTestData.event(EventStatus.DRAFT));
 
         mockMvc.perform(get("/api/events/CMF-2026"))
                 .andExpect(status().isOk())
@@ -145,7 +149,8 @@ class EventControllerTest {
     // TEST-CTRL-EVT-005
     @Test
     void findPublishedEvents_returns200() throws Exception {
-        when(eventService.findPublishedEvents()).thenReturn(List.of(ControllerTestData.eventSummary()));
+        when(eventService.findPublishedEvents())
+                .thenReturn(List.of(ControllerTestData.eventSummary()));
 
         mockMvc.perform(get("/api/events/published"))
                 .andExpect(status().isOk())
@@ -159,7 +164,8 @@ class EventControllerTest {
     // TEST-CTRL-EVT-006 / AC-CTRL005
     @Test
     void publish_validTransition_returns200() throws Exception {
-        when(eventService.publish("CMF-2026")).thenReturn(ControllerTestData.event(EventStatus.PUBLISHED));
+        when(eventService.publish("CMF-2026"))
+                .thenReturn(ControllerTestData.event(EventStatus.PUBLISHED));
 
         mockMvc.perform(patch("/api/events/CMF-2026/publish"))
                 .andExpect(status().isOk())
@@ -172,20 +178,26 @@ class EventControllerTest {
     @Test
     void publish_businessRuleViolation_returns409() throws Exception {
         when(eventService.publish("CMF-2026"))
-                .thenThrow(new BusinessRuleException("Only DRAFT events can be published. Current status: CANCELLED"));
+                .thenThrow(
+                        new BusinessRuleException(
+                                "Only DRAFT events can be published. Current status: CANCELLED"));
 
         mockMvc.perform(patch("/api/events/CMF-2026/publish"))
                 .andExpect(status().isConflict())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.error").value("Conflict"))
-                .andExpect(jsonPath("$.message").value("Only DRAFT events can be published. Current status: CANCELLED"));
+                .andExpect(
+                        jsonPath("$.message")
+                                .value(
+                                        "Only DRAFT events can be published. Current status: CANCELLED"));
     }
 
     // TEST-CTRL-EVT-008
     @Test
     void addArtist_validAssociation_returns200() throws Exception {
-        when(eventService.addArtist("CMF-2026", 1L)).thenReturn(ControllerTestData.event(EventStatus.DRAFT));
+        when(eventService.addArtist("CMF-2026", 1L))
+                .thenReturn(ControllerTestData.event(EventStatus.DRAFT));
 
         mockMvc.perform(post("/api/events/CMF-2026/artists/1"))
                 .andExpect(status().isOk())
@@ -199,8 +211,7 @@ class EventControllerTest {
         when(eventService.addArtist("CMF-2026", 1L))
                 .thenThrow(new DuplicateResourceException("Artist already associated"));
 
-        mockMvc.perform(post("/api/events/CMF-2026/artists/1"))
-                .andExpect(status().isConflict());
+        mockMvc.perform(post("/api/events/CMF-2026/artists/1")).andExpect(status().isConflict());
     }
 
     @Test
@@ -215,7 +226,8 @@ class EventControllerTest {
     // TEST-CTRL-EVT-009
     @Test
     void findByArtist_returns200() throws Exception {
-        when(eventService.findByArtist("Solar Beat")).thenReturn(List.of(ControllerTestData.eventSummary()));
+        when(eventService.findByArtist("Solar Beat"))
+                .thenReturn(List.of(ControllerTestData.eventSummary()));
 
         mockMvc.perform(get("/api/events/by-artist").param("stageName", "Solar Beat"))
                 .andExpect(status().isOk())

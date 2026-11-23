@@ -22,15 +22,19 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class VenueServiceImplTest {
 
-    @Mock
-    private VenueRepository venueRepository;
-    @Mock
-    private VenueMapper venueMapper;
-    @InjectMocks
-    private VenueServiceImpl service;
+    @Mock private VenueRepository venueRepository;
+    @Mock private VenueMapper venueMapper;
+    @InjectMocks private VenueServiceImpl service;
 
     private final VenueResponse response =
-            new VenueResponse(1L, "VEN-SMR-01", "Marina Convention Center", "Santa Marta", "Calle 1", 3, true);
+            new VenueResponse(
+                    1L,
+                    "VEN-SMR-01",
+                    "Marina Convention Center",
+                    "Santa Marta",
+                    "Calle 1",
+                    3,
+                    true);
 
     @Test
     void findByCode_existingVenue_returnsDto() {

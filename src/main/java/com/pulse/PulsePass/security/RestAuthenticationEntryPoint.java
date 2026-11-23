@@ -22,17 +22,26 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     }
 
     public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException ex) throws IOException {
-        writeError(response, HttpStatus.UNAUTHORIZED, "Authentication required or invalid credentials");
+            HttpServletRequest request, HttpServletResponse response, AuthenticationException ex)
+            throws IOException {
+        writeError(
+                response,
+                HttpStatus.UNAUTHORIZED,
+                "Authentication required or invalid credentials");
     }
 
-    private void writeError(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+    private void writeError(HttpServletResponse response, HttpStatus status, String message)
+            throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        mapper.writeValue(response.getWriter(), new ErrorResponse(
-            LocalDateTime.now(), status.value(), status.getReasonPhrase(), message, Map.of()));
+        mapper.writeValue(
+                response.getWriter(),
+                new ErrorResponse(
+                        LocalDateTime.now(),
+                        status.value(),
+                        status.getReasonPhrase(),
+                        message,
+                        Map.of()));
     }
 }

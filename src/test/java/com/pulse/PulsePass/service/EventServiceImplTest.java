@@ -35,32 +35,48 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EventServiceImplTest {
 
-    @Mock
-    private EventRepository eventRepository;
-    @Mock
-    private VenueRepository venueRepository;
-    @Mock
-    private ArtistRepository artistRepository;
-    @Mock
-    private EventMapper eventMapper;
+    @Mock private EventRepository eventRepository;
+    @Mock private VenueRepository venueRepository;
+    @Mock private ArtistRepository artistRepository;
+    @Mock private EventMapper eventMapper;
 
     private EventServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new EventServiceImpl(eventRepository, venueRepository, artistRepository,
-                eventMapper, ServiceTestData.CLOCK);
+        service =
+                new EventServiceImpl(
+                        eventRepository,
+                        venueRepository,
+                        artistRepository,
+                        eventMapper,
+                        ServiceTestData.CLOCK);
     }
 
     private EventResponse response(EventStatus status) {
-        return new EventResponse(1L, "CMF-2026", "Caribbean Music Fest 2026", "Festival",
-                EventCategory.MUSIC, status, ServiceTestData.EVENT_DATE, 18,
-                "VEN-SMR-01", "Marina Convention Center", List.of());
+        return new EventResponse(
+                1L,
+                "CMF-2026",
+                "Caribbean Music Fest 2026",
+                "Festival",
+                EventCategory.MUSIC,
+                status,
+                ServiceTestData.EVENT_DATE,
+                18,
+                "VEN-SMR-01",
+                "Marina Convention Center",
+                List.of());
     }
 
     private CreateEventRequest request(LocalDateTime date) {
-        return new CreateEventRequest("CMF-2026", "Caribbean Music Fest 2026", "Festival",
-                EventCategory.MUSIC, date, 18, "VEN-SMR-01");
+        return new CreateEventRequest(
+                "CMF-2026",
+                "Caribbean Music Fest 2026",
+                "Festival",
+                EventCategory.MUSIC,
+                date,
+                18,
+                "VEN-SMR-01");
     }
 
     // TEST-EVENT-001
@@ -127,7 +143,8 @@ class EventServiceImplTest {
     // TEST-EVENT-005
     @Test
     void create_inactiveVenue_throwsBusinessRule() {
-        when(venueRepository.findByCode("VEN-SMR-01")).thenReturn(Optional.of(ServiceTestData.venue(false)));
+        when(venueRepository.findByCode("VEN-SMR-01"))
+                .thenReturn(Optional.of(ServiceTestData.venue(false)));
 
         assertThatThrownBy(() -> service.create(request(ServiceTestData.EVENT_DATE)))
                 .isInstanceOf(BusinessRuleException.class);
@@ -138,7 +155,8 @@ class EventServiceImplTest {
     // TEST-EVENT-006
     @Test
     void create_pastDate_throwsBusinessRule() {
-        when(venueRepository.findByCode("VEN-SMR-01")).thenReturn(Optional.of(ServiceTestData.venue(true)));
+        when(venueRepository.findByCode("VEN-SMR-01"))
+                .thenReturn(Optional.of(ServiceTestData.venue(true)));
 
         assertThatThrownBy(() -> service.create(request(LocalDateTime.of(2026, 1, 1, 20, 0))))
                 .isInstanceOf(BusinessRuleException.class)
@@ -150,11 +168,20 @@ class EventServiceImplTest {
     // BR-EVENT-006
     @Test
     void create_negativeMinimumAge_throwsBusinessRule() {
-        when(venueRepository.findByCode("VEN-SMR-01")).thenReturn(Optional.of(ServiceTestData.venue(true)));
-        CreateEventRequest negativeAge = new CreateEventRequest("CMF-2026", "Fest", "Festival",
-                EventCategory.MUSIC, ServiceTestData.EVENT_DATE, -1, "VEN-SMR-01");
+        when(venueRepository.findByCode("VEN-SMR-01"))
+                .thenReturn(Optional.of(ServiceTestData.venue(true)));
+        CreateEventRequest negativeAge =
+                new CreateEventRequest(
+                        "CMF-2026",
+                        "Fest",
+                        "Festival",
+                        EventCategory.MUSIC,
+                        ServiceTestData.EVENT_DATE,
+                        -1,
+                        "VEN-SMR-01");
 
-        assertThatThrownBy(() -> service.create(negativeAge)).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> service.create(negativeAge))
+                .isInstanceOf(BusinessRuleException.class);
 
         verify(eventRepository, never()).save(any());
     }
@@ -180,7 +207,8 @@ class EventServiceImplTest {
         Event event = ServiceTestData.event(EventStatus.CANCELLED, ServiceTestData.venue(true));
         when(eventRepository.findByEventCode("CMF-2026")).thenReturn(Optional.of(event));
 
-        assertThatThrownBy(() -> service.publish("CMF-2026")).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> service.publish("CMF-2026"))
+                .isInstanceOf(BusinessRuleException.class);
 
         assertThat(event.getStatus()).isEqualTo(EventStatus.CANCELLED);
         verify(eventRepository, never()).save(any());
@@ -193,7 +221,8 @@ class EventServiceImplTest {
         event.setEventDate(LocalDateTime.of(2026, 1, 1, 20, 0));
         when(eventRepository.findByEventCode("CMF-2026")).thenReturn(Optional.of(event));
 
-        assertThatThrownBy(() -> service.publish("CMF-2026")).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> service.publish("CMF-2026"))
+                .isInstanceOf(BusinessRuleException.class);
 
         verify(eventRepository, never()).save(any());
     }
@@ -204,7 +233,8 @@ class EventServiceImplTest {
         Event event = ServiceTestData.event(EventStatus.DRAFT, ServiceTestData.venue(false));
         when(eventRepository.findByEventCode("CMF-2026")).thenReturn(Optional.of(event));
 
-        assertThatThrownBy(() -> service.publish("CMF-2026")).isInstanceOf(BusinessRuleException.class);
+        assertThatThrownBy(() -> service.publish("CMF-2026"))
+                .isInstanceOf(BusinessRuleException.class);
 
         verify(eventRepository, never()).save(any());
     }
@@ -266,7 +296,8 @@ class EventServiceImplTest {
 
     @Test
     void findPublishedEvents_queriesPublishedStatus() {
-        when(eventRepository.findByStatusOrderByEventDateAsc(eq(EventStatus.PUBLISHED))).thenReturn(List.of());
+        when(eventRepository.findByStatusOrderByEventDateAsc(eq(EventStatus.PUBLISHED)))
+                .thenReturn(List.of());
 
         assertThat(service.findPublishedEvents()).isEmpty();
     }
