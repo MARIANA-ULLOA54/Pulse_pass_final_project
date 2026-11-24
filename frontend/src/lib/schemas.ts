@@ -108,9 +108,9 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Ingresa tu contraseña"),
 });
 export const createEventSchema = z.object({
-  eventCode: z.string().min(1).max(30),
-  name: z.string().min(1).max(150),
-  description: z.string(),
+  eventCode: z.string().trim().min(1, "Ingresa el código del evento").max(30),
+  name: z.string().trim().min(1, "Ingresa el nombre del evento").max(150),
+  description: z.string().max(2000, "La descripción supera los 2000 caracteres"),
   category,
   eventDate: z.string().min(1),
   minimumAge: z.number().int().min(0),

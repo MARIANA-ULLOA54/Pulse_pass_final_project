@@ -1,20 +1,35 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { api } from "../lib/api";
 import { RUTAS } from "../lib/rutas";
-import { Heading, Boton, Panel } from "../componentes/UI";
-import { field } from "./shared";
+import { Badge, Heading, Boton, Panel } from "../componentes/UI";
+import { leerCodigosDeEventosCreados } from "../lib/adminEventos";
+import { Remote, field } from "./shared";
+
+function EventoReciente({ code }: { code: string }) {
+  return (
+    <Remote
+      keyName={["admin-event", code]}
+      fetcher={() => api.event(code)}
+      notFound={<Link className="block py-3 font-mono" to={RUTAS.gestionar(code)}>{code}</Link>}
+    >
+      {(event) => (
+        <Link className="flex flex-wrap items-center justify-between gap-3 py-3" to={RUTAS.gestionar(event.eventCode)}>
+          <span>
+            <span className="block font-semibold">{event.name}</span>
+            <span className="font-mono text-sm text-slate-500">{event.eventCode}</span>
+          </span>
+          <Badge status={event.status} />
+        </Link>
+      )}
+    </Remote>
+  );
+}
+
 export default function AdminEventos() {
   const [code, setCode] = useState("");
+  const [saved] = useState(leerCodigosDeEventosCreados);
   const navigate = useNavigate();
-  const saved = (() => {
-    try {
-      return JSON.parse(
-        sessionStorage.getItem("pulsepass_admin_codes") ?? "[]",
-      ) as string[];
-    } catch {
-      return [] as string[];
-    }
-  })();
   return (
     <>
       <Heading
@@ -31,7 +46,8 @@ export default function AdminEventos() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            navigate(RUTAS.gestionar(code));
+            const normalizedCode = code.trim();
+            if (normalizedCode) navigate(RUTAS.gestionar(normalizedCode));
           }}
         >
           <label>
@@ -51,14 +67,10 @@ export default function AdminEventos() {
       {saved.length > 0 && (
         <Panel>
           <h2 className="font-bold mb-3">Eventos creados en esta pestaña</h2>
-          {saved.map((code) => (
-            <Link
-              className="block text-marca-600 py-2"
-              key={code}
-              to={RUTAS.gestionar(code)}
-            >
-              {code}
-            </Link>
+          {saved.map((savedCode) => (
+            <div className="border-t border-slate-200 dark:border-slate-700" key={savedCode}>
+              <EventoReciente code={savedCode} />
+            </div>
           ))}
         </Panel>
       )}
