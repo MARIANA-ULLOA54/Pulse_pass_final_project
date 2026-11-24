@@ -23,16 +23,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @PostgresDataJpaTest
 class EventArtistIT {
 
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private ArtistRepository artistRepository;
-    @Autowired
-    private VenueRepository venueRepository;
-    @Autowired
-    private EntityManager entityManager;
-    @Autowired
-    private JdbcTemplate jdbc;
+    @Autowired private EventRepository eventRepository;
+    @Autowired private ArtistRepository artistRepository;
+    @Autowired private VenueRepository venueRepository;
+    @Autowired private EntityManager entityManager;
+    @Autowired private JdbcTemplate jdbc;
 
     private Venue marina() {
         return venueRepository.saveAndFlush(TestData.marinaConventionCenter());
@@ -59,7 +54,10 @@ class EventArtistIT {
     @DisplayName("FR-ART-002: PostgreSQL rechaza un stageName duplicado")
     void rejectsDuplicateStageName() {
         // "Solar Beat" ya fue insertado por la migracion V2
-        assertThatThrownBy(() -> artistRepository.saveAndFlush(new Artist("Solar Beat", "Peru", "Pop", true)))
+        assertThatThrownBy(
+                        () ->
+                                artistRepository.saveAndFlush(
+                                        new Artist("Solar Beat", "Peru", "Pop", true)))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -75,7 +73,8 @@ class EventArtistIT {
 
         Event found = eventRepository.findByEventCode("CMF-2026").orElseThrow();
 
-        assertThat(found.getArtists()).extracting(Artist::getStageName)
+        assertThat(found.getArtists())
+                .extracting(Artist::getStageName)
                 .containsExactlyInAnyOrder("Solar Beat", "Neon Waves", "Caribbean Sound");
     }
 
@@ -88,8 +87,11 @@ class EventArtistIT {
         event.addArtist(solar);
         eventRepository.saveAndFlush(event);
 
-        Integer rows = jdbc.queryForObject(
-                "SELECT COUNT(*) FROM event_artists WHERE event_id = ?", Integer.class, event.getId());
+        Integer rows =
+                jdbc.queryForObject(
+                        "SELECT COUNT(*) FROM event_artists WHERE event_id = ?",
+                        Integer.class,
+                        event.getId());
 
         assertThat(rows).isEqualTo(1);
     }
@@ -102,8 +104,12 @@ class EventArtistIT {
         event.addArtist(solar);
         eventRepository.saveAndFlush(event);
 
-        assertThatThrownBy(() -> jdbc.update(
-                "INSERT INTO event_artists (event_id, artist_id) VALUES (?, ?)", event.getId(), solar.getId()))
+        assertThatThrownBy(
+                        () ->
+                                jdbc.update(
+                                        "INSERT INTO event_artists (event_id, artist_id) VALUES (?, ?)",
+                                        event.getId(),
+                                        solar.getId()))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
@@ -114,12 +120,27 @@ class EventArtistIT {
         Artist solar = seeded("Solar Beat");
         Artist neon = seeded("Neon Waves");
 
-        Event first = TestData.event("EVT-A1", venue, EventStatus.PUBLISHED, LocalDateTime.of(2030, 8, 1, 20, 0));
+        Event first =
+                TestData.event(
+                        "EVT-A1",
+                        venue,
+                        EventStatus.PUBLISHED,
+                        LocalDateTime.of(2030, 8, 1, 20, 0));
         first.addArtist(solar);
         first.addArtist(neon);
-        Event second = TestData.event("EVT-A2", venue, EventStatus.PUBLISHED, LocalDateTime.of(2030, 2, 1, 20, 0));
+        Event second =
+                TestData.event(
+                        "EVT-A2",
+                        venue,
+                        EventStatus.PUBLISHED,
+                        LocalDateTime.of(2030, 2, 1, 20, 0));
         second.addArtist(solar);
-        Event third = TestData.event("EVT-A3", venue, EventStatus.PUBLISHED, LocalDateTime.of(2030, 5, 1, 20, 0));
+        Event third =
+                TestData.event(
+                        "EVT-A3",
+                        venue,
+                        EventStatus.PUBLISHED,
+                        LocalDateTime.of(2030, 5, 1, 20, 0));
         third.addArtist(neon);
         eventRepository.save(first);
         eventRepository.save(second);

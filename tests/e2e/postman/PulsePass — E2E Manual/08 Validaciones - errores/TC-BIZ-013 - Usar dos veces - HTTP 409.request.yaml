@@ -1,0 +1,17 @@
+$kind: http-request
+name: TC-BIZ-013 | Usar dos veces | HTTP 409
+description: |
+  ID: TC-BIZ-013
+  Actor: STAFF
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 409.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/tickets/{{ticketUsableCode}}/use"
+method: PATCH
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{staffToken}}"
+order: 5000

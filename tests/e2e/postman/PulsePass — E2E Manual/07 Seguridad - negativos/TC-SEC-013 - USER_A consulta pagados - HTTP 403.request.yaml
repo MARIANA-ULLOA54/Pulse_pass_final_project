@@ -1,0 +1,17 @@
+$kind: http-request
+name: TC-SEC-013 | USER_A consulta pagados | HTTP 403
+description: |
+  ID: TC-SEC-013
+  Actor: USER_A
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 403.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/events/{{publishedEventCode}}/tickets/paid"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{userAToken}}"
+order: 17000

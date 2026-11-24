@@ -1,0 +1,29 @@
+$kind: http-request
+name: E2E-USR-01 | Registrar USER_A | HTTP 201
+description: |
+  ID: E2E-USR-01
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 201.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/users"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "{{userAUsername}}",
+      "email": "{{userAEmail}}",
+      "firstName": "Andrea",
+      "lastName": "Pruebas",
+      "phone": "3000000000",
+      "city": "Santa Marta",
+      "birthDate": "1998-05-15",
+      "password": "{{userAPassword}}"
+    }
+auth:
+  type: noauth
+order: 1000

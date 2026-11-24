@@ -1,0 +1,23 @@
+$kind: http-request
+name: TC-AUTH-005 | Usuario inexistente | HTTP 401
+description: |
+  ID: TC-AUTH-005
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 401.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/auth/login"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "identifier": "noexiste_{{runId}}",
+      "password": "Incorrecta123456"
+    }
+auth:
+  type: noauth
+order: 4000

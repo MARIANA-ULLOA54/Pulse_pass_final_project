@@ -1,0 +1,15 @@
+$kind: http-request
+name: TC-HTTP-404 | Venue inexistente | HTTP 404
+description: |
+  ID: TC-HTTP-404
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 404.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/venues/NO_EXISTE_{{runId}}"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: noauth
+order: 3000

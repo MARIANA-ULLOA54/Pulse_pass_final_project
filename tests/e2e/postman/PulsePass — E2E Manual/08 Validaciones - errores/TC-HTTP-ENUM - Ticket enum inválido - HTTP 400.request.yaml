@@ -1,0 +1,26 @@
+$kind: http-request
+name: TC-HTTP-ENUM | Ticket enum inválido | HTTP 400
+description: |
+  ID: TC-HTTP-ENUM
+  Actor: USER_A
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 400.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/tickets"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "userEmail": "{{userAEmail}}",
+      "eventCode": "{{publishedEventCode}}",
+      "type": "TIPO_INVALIDO"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{userAToken}}"
+order: 6000

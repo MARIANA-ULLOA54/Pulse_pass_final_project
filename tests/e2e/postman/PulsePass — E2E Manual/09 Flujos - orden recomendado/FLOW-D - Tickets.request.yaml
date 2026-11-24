@@ -1,0 +1,8 @@
+$kind: http-request
+name: FLOW-D | Tickets
+description: Guía de secuencia (request de conectividad reutilizable). Comprar T1 y T2 → propiedad negativa antes de cancelar → cancelar T1 → STAFF usa T2
+url: "{{baseUrl}}/api/venues/active"
+method: GET
+auth:
+  type: noauth
+order: 4000

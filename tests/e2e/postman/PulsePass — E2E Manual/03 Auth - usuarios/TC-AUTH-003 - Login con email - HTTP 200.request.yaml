@@ -1,0 +1,23 @@
+$kind: http-request
+name: TC-AUTH-003 | Login con email | HTTP 200
+description: |
+  ID: TC-AUTH-003
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 200.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/auth/login"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "identifier": "{{userAEmail}}",
+      "password": "{{userAPassword}}"
+    }
+auth:
+  type: noauth
+order: 7000

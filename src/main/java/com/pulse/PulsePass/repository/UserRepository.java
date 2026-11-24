@@ -11,4 +11,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /** Busqueda por email ignorando mayusculas/minusculas (seccion 14 del PRD). */
     Optional<User> findByEmailIgnoreCase(String email);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmailIgnoreCase(String email);
 }

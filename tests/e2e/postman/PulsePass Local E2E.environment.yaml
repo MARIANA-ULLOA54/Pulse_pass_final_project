@@ -1,0 +1,61 @@
+name: PulsePass Local E2E
+values:
+  - key: baseUrl
+    value: 'http://localhost:8080'
+  - key: runId
+    value: e2e01
+  - key: userAEmail
+    value: andrea_e2e01@example.test
+  - key: userAUsername
+    value: andrea_e2e01
+  - key: userBEmail
+    value: beatriz_e2e01@example.test
+  - key: userBUsername
+    value: beatriz_e2e01
+  - key: userAPassword
+    value: ''
+    disabled: true
+  - key: userBPassword
+    value: ''
+  - key: staffIdentifier
+    value: staff_e2e
+  - key: adminIdentifier
+    value: admin_e2e
+  - key: staffPassword
+    value: ''
+  - key: adminPassword
+    value: ''
+  - key: userAToken
+    value: ''
+  - key: userBToken
+    value: ''
+  - key: staffToken
+    value: ''
+  - key: adminToken
+    value: ''
+  - key: invalidToken
+    value: token.invalido.prueba
+  - key: venueActiveCode
+    value: VEN-E2E
+  - key: artistId
+    value: '1'
+  - key: artistStageName
+    value: Solar Beat
+  - key: publishedEventCode
+    value: ''
+  - key: draftEventCode
+    value: ''
+  - key: eventToPublishCode
+    value: ''
+  - key: newEventCode
+    value: EV-E2E-01
+  - key: ticketCancelableCode
+    value: ''
+  - key: ticketUsableCode
+    value: ''
+  - key: expectedIssuer
+    value: pulsepass-api
+  - key: expectedTokenTtlSeconds
+    value: '900'
+  - key: expectedForeignResourceStatus
+    value: '403'

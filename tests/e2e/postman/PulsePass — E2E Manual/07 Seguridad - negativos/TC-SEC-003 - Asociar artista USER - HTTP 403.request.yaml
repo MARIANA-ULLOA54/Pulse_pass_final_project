@@ -1,0 +1,17 @@
+$kind: http-request
+name: TC-SEC-003 | Asociar artista USER | HTTP 403
+description: |
+  ID: TC-SEC-003
+  Actor: USER_A
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 403.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/events/{{eventToPublishCode}}/artists/{{artistId}}"
+method: POST
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{userAToken}}"
+order: 8000

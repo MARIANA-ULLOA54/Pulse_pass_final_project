@@ -1,0 +1,15 @@
+$kind: http-request
+name: TC-AUTH-007 | Me sin token | HTTP 401
+description: |
+  ID: TC-AUTH-007
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 401.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/auth/me"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: noauth
+order: 1000

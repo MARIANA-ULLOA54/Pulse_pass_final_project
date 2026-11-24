@@ -1,0 +1,31 @@
+$kind: http-request
+name: E2E-EVT-01 | Crear evento DRAFT | HTTP 201
+description: |-
+  ID: E2E-EVT-01
+  Actor: ADMIN
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 201.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+  Guardar eventCode en draftEventCode y eventToPublishCode
+url: "{{baseUrl}}/api/events"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "eventCode": "{{newEventCode}}",
+      "name": "PulsePass E2E {{runId}}",
+      "description": "Evento de prueba manual",
+      "category": "MUSIC",
+      "eventDate": "2030-08-20T20:00:00",
+      "minimumAge": 0,
+      "venueCode": "{{venueActiveCode}}"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{adminToken}}"
+order: 1000

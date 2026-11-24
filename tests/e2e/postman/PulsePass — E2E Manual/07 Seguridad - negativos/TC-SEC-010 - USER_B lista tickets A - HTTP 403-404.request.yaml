@@ -1,0 +1,17 @@
+$kind: http-request
+name: TC-SEC-010 | USER_B lista tickets A | HTTP 403/404
+description: |
+  ID: TC-SEC-010
+  Actor: USER_B
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 403/404.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/tickets/by-user?email={{userAEmail}}"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{userBToken}}"
+order: 14000

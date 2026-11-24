@@ -1,0 +1,29 @@
+$kind: http-request
+name: TC-HTTP-400 | Registro email inválido | HTTP 400
+description: |
+  ID: TC-HTTP-400
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 400.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/users"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "{{userAUsername}}",
+      "email": "correo-invalido",
+      "firstName": "Andrea",
+      "lastName": "Pruebas",
+      "phone": "3000000000",
+      "city": "Santa Marta",
+      "birthDate": "1998-05-15",
+      "password": "{{userAPassword}}"
+    }
+auth:
+  type: noauth
+order: 1000

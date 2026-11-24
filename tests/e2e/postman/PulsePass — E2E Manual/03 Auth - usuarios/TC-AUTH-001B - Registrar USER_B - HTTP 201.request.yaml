@@ -1,0 +1,29 @@
+$kind: http-request
+name: TC-AUTH-001B | Registrar USER_B | HTTP 201
+description: |
+  ID: TC-AUTH-001B
+  Actor: ANONYMOUS
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 201.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/users"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "{{userBUsername}}",
+      "email": "{{userBEmail}}",
+      "firstName": "Beatriz",
+      "lastName": "Pruebas",
+      "phone": "3000000000",
+      "city": "Santa Marta",
+      "birthDate": "1998-05-15",
+      "password": "{{userBPassword}}"
+    }
+auth:
+  type: noauth
+order: 2000

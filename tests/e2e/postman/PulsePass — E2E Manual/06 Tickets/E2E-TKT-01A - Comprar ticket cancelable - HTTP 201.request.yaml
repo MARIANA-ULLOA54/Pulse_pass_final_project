@@ -1,0 +1,27 @@
+$kind: http-request
+name: E2E-TKT-01A | Comprar ticket cancelable | HTTP 201
+description: |-
+  ID: E2E-TKT-01A
+  Actor: USER_A
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 201.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+  Copiar ticketCode a ticketCancelableCode
+url: "{{baseUrl}}/api/tickets"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "userEmail": "{{userAEmail}}",
+      "eventCode": "{{publishedEventCode}}",
+      "type": "GENERAL"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{userAToken}}"
+order: 1000

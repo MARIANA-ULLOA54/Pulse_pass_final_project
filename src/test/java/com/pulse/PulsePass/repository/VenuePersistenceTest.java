@@ -15,8 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @PostgresDataJpaTest
 class VenuePersistenceTest {
 
-    @Autowired
-    private VenueRepository venueRepository;
+    @Autowired private VenueRepository venueRepository;
 
     @Test
     @DisplayName("AC-001: un venue valido se recupera por ID y por codigo")
@@ -36,21 +35,30 @@ class VenuePersistenceTest {
     void rejectsDuplicateCode() {
         venueRepository.saveAndFlush(TestData.venue("VEN-DUP-01", "Santa Marta", 100));
 
-        assertThatThrownBy(() -> venueRepository.saveAndFlush(TestData.venue("VEN-DUP-01", "Bogota", 200)))
+        assertThatThrownBy(
+                        () ->
+                                venueRepository.saveAndFlush(
+                                        TestData.venue("VEN-DUP-01", "Bogota", 200)))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
     @DisplayName("FR-VEN-003: PostgreSQL rechaza capacidad igual a cero")
     void rejectsZeroCapacity() {
-        assertThatThrownBy(() -> venueRepository.saveAndFlush(TestData.venue("VEN-ZERO", "Santa Marta", 0)))
+        assertThatThrownBy(
+                        () ->
+                                venueRepository.saveAndFlush(
+                                        TestData.venue("VEN-ZERO", "Santa Marta", 0)))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
     @DisplayName("FR-VEN-003: PostgreSQL rechaza capacidad negativa")
     void rejectsNegativeCapacity() {
-        assertThatThrownBy(() -> venueRepository.saveAndFlush(TestData.venue("VEN-NEG", "Santa Marta", -10)))
+        assertThatThrownBy(
+                        () ->
+                                venueRepository.saveAndFlush(
+                                        TestData.venue("VEN-NEG", "Santa Marta", -10)))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 

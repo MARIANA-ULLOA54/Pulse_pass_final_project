@@ -1,0 +1,17 @@
+$kind: http-request
+name: TC-SEC-011 | USER_B cancela ticket A | HTTP 403/404
+description: |
+  ID: TC-SEC-011
+  Actor: USER_B
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 403/404.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/tickets/{{ticketCancelableCode}}/cancel"
+method: PATCH
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{userBToken}}"
+order: 15000

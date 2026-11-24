@@ -1,0 +1,17 @@
+$kind: http-request
+name: E2E-TKT-04 | Tickets pagados del evento | HTTP 200
+description: |
+  ID: E2E-TKT-04
+  Actor: STAFF
+  Precondiciones: variables y fixtures preparados.
+  HTTP esperado: 200.
+  Revisión manual: Status, Body, campos del DTO, y persistencia si hay mutación.
+url: "{{baseUrl}}/api/events/{{publishedEventCode}}/tickets/paid"
+method: GET
+headers:
+  Accept: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{staffToken}}"
+order: 5000

@@ -8,11 +8,16 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
+    Optional<Ticket> findByTicketCode(String ticketCode);
+
     /** FR-TKT-006: tickets de un usuario navegando Ticket -> User -> email. */
     List<Ticket> findByUser_Email(String email);
+
+    List<Ticket> findByUser_EmailIgnoreCaseOrderByPurchaseDateDesc(String email);
 
     /** FR-TKT-006: tickets de un usuario por email y estado. */
     List<Ticket> findByUser_EmailAndStatus(String email, TicketStatus status);
@@ -24,18 +29,20 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findByEvent_EventCodeAndStatus(String eventCode, TicketStatus status);
 
     /** FR-TKT-008: conteo de tickets de un evento en un estado dado (PAID para ventas). */
-    @Query("""
+    @Query(
+            """
             SELECT COUNT(t)
             FROM Ticket t
             JOIN t.event e
             WHERE e.eventCode = :eventCode
               AND t.status = :status
             """)
-    long countByEventCodeAndStatus(@Param("eventCode") String eventCode,
-                                   @Param("status") TicketStatus status);
+    long countByEventCodeAndStatus(
+            @Param("eventCode") String eventCode, @Param("status") TicketStatus status);
 
     /** FR-SRC-004: tickets cuyo evento es posterior a una fecha, en orden cronologico. */
-    @Query("""
+    @Query(
+            """
             SELECT t
             FROM Ticket t
             JOIN t.event e

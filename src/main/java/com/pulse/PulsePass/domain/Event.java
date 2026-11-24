@@ -69,11 +69,17 @@ public class Event {
     @OneToMany(mappedBy = "event")
     private Set<Ticket> tickets = new HashSet<>();
 
-    public Event() {
-    }
+    public Event() {}
 
-    public Event(String eventCode, String name, String description, EventCategory category,
-                 EventStatus status, LocalDateTime eventDate, int minimumAge, Venue venue) {
+    public Event(
+            String eventCode,
+            String name,
+            String description,
+            EventCategory category,
+            EventStatus status,
+            LocalDateTime eventDate,
+            int minimumAge,
+            Venue venue) {
         this.eventCode = eventCode;
         this.name = name;
         this.description = description;
@@ -94,27 +100,89 @@ public class Event {
         artist.getEvents().remove(this);
     }
 
-    public Long getId() { return id; }
-    public String getEventCode() { return eventCode; }
-    public void setEventCode(String eventCode) { this.eventCode = eventCode; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public EventCategory getCategory() { return category; }
-    public void setCategory(EventCategory category) { this.category = category; }
-    public EventStatus getStatus() { return status; }
-    public void setStatus(EventStatus status) { this.status = status; }
-    public LocalDateTime getEventDate() { return eventDate; }
-    public void setEventDate(LocalDateTime eventDate) { this.eventDate = eventDate; }
-    public int getMinimumAge() { return minimumAge; }
-    public void setMinimumAge(int minimumAge) { this.minimumAge = minimumAge; }
-    public String getStreamingUrl() { return streamingUrl; }
-    public void setStreamingUrl(String streamingUrl) { this.streamingUrl = streamingUrl; }
-    public Venue getVenue() { return venue; }
-    public void setVenue(Venue venue) { this.venue = venue; }
-    public Set<Artist> getArtists() { return artists; }
-    public Set<Ticket> getTickets() { return tickets; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getEventCode() {
+        return eventCode;
+    }
+
+    public void setEventCode(String eventCode) {
+        this.eventCode = eventCode;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public EventCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(EventCategory category) {
+        this.category = category;
+    }
+
+    public EventStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EventStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDateTime eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public int getMinimumAge() {
+        return minimumAge;
+    }
+
+    public void setMinimumAge(int minimumAge) {
+        this.minimumAge = minimumAge;
+    }
+
+    public String getStreamingUrl() {
+        return streamingUrl;
+    }
+
+    public void setStreamingUrl(String streamingUrl) {
+        this.streamingUrl = streamingUrl;
+    }
+
+    public Venue getVenue() {
+        return venue;
+    }
+
+    public void setVenue(Venue venue) {
+        this.venue = venue;
+    }
+
+    public Set<Artist> getArtists() {
+        return artists;
+    }
+
+    public Set<Ticket> getTickets() {
+        return tickets;
+    }
 
     @Override
     public boolean equals(Object o) {
